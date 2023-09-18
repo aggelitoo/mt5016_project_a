@@ -28,5 +28,29 @@ data_2 <- data %>%
          "urbaniseringsindex" = "x62",
          "skilsmässoindex" = "x22",
          "religiositetsindex" = "x3")
+
+save(data_1, file = "data_1.Rda")
+save(data_2, file = "data_2.Rda")
 ```
+
+```{r}
+model_1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_1)
+```
+
+
+```{r}
+model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_2)
+```
+
+```{r}
+pairs(data_1, 3:8)
+```
+
+
 
