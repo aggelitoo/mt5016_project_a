@@ -1,0 +1,8 @@
+Från regression av tidsperiod 1 och 2 kan vi avläsa att modell 2 har fler parametrar som är av signifikans, vilka är religionsindex och skilsmässoindex (99% signifikansnivå) samt urbaniseraingsindex (90% signifikansnivå). Modell 1 har endast en parameter av sigfinikans (90% signifikansnivå), och den har även en förklaringsgrad på 0.7, vilket är lägre än 0.74, vilket är förklaringsgraden för modell 2. 
+
+För båda modellerna har parametrarna alkoholindex och skilsmässoindex positiv korrelation med responsvariablen. Detta anser vi vara en rimlig korrelation då alkohol och skilsmässor bör ha en negativ effekt på en individs mående.
+
+Vidare har religionsindex, urbaniseringsindex samt total arbetslöshetsindex negativ korrelation med responsvariablen i båda modellerna, de två första sambanden verkar rimliga enligt våra antaganden, men det verkar däremot inte rimligt att ökad arbetslöshetindex leder till färre självmord.
+
+Oväntade lutningskoefficienter för parametarna kan ske på grund av konliearitet mellan det förklarande variablerna. För att undersöka detta plottar vi alla variabler parvis för respektive modell för att få en överblick huruvida det finns tecken på konliearitet. Vi väljer att även undersöka VIF för alla parameterar i båda modellerna (?).
+
