@@ -1,0 +1,95 @@
+---
+title: "Projekt A MT5016"
+author: "Betty Frankl"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Projekt A
+
+```{r}
+load("data_1.Rda")
+load("data_2.Rda")
+```
+
+```{r}
+sm_arb_män1 <- lm(självmordsfrekvens ~ arbetslöshetsindex_män, data = data_1)
+sm_arb_tot1 <- lm(självmordsfrekvens ~ arbetslöshetsindex_total, data = data_1)
+sm_alk1 <- lm(självmordsfrekvens ~ alkoholindex, data = data_1)
+sm_urb1 <- lm(självmordsfrekvens ~ urbaniseringsindex, data = data_1)
+sm_ski1 <- lm(självmordsfrekvens ~ skilsmässoindex, data = data_1)
+sm_rel1 <- lm(självmordsfrekvens ~ religiositetsindex, data = data_1)
+
+sm_arb_män2 <- lm(självmordsfrekvens ~ arbetslöshetsindex_män, data = data_2)
+sm_arb_tot2 <- lm(självmordsfrekvens ~ arbetslöshetsindex_total, data = data_2)
+sm_alk2 <- lm(självmordsfrekvens ~ alkoholindex, data = data_2)
+sm_urb2 <- lm(självmordsfrekvens ~ urbaniseringsindex, data = data_2)
+sm_ski2 <- lm(självmordsfrekvens ~ skilsmässoindex, data = data_2)
+sm_rel2 <- lm(självmordsfrekvens ~ religiositetsindex, data = data_2)
+```
+
+```{r, fig.cap="Residualer"}
+plot_residuals <- function(data, title) {
+  par(mfrow = c(2,3))
+  plot(residuals(sm_arb_män1) ~ data$arbetslöshetsindex_män, 
+       xlab = "arbetslöshetsindex män",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_arb_tot1) ~ data$arbetslöshetsindex_total, 
+       xlab = "arbetslöshetsindex total",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_alk1) ~ data$alkoholindex, 
+       xlab = "alkoholindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_urb1) ~ data$urbaniseringsindex, 
+       xlab = "urbaniseringsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_ski1) ~ data$skilsmässoindex, 
+       xlab = "skilsmässoindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_rel1) ~ data$religiositetsindex, 
+       xlab = "religiositetsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0)
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+```
+
+```{r}
+plot_residuals(data_1, "Residualplottar för respektive förklarande variabel")
+```
+```{r}
+plot_qq <- function(data, title) {
+  par(mfrow = c(2,3))
+  qqnorm(residuals(sm_arb_män1), xlab = "arbetslöshetsindex män")
+  qqline(residuals(sm_arb_män1))
+  qqnorm(residuals(sm_arb_tot1), xlab = "arbetslöshetsindex total")
+  qqline(residuals(sm_arb_tot1))
+  qqnorm(residuals(sm_alk1), xlab = "alkoholindex")
+  qqline(residuals(sm_alk1))
+  qqnorm(residuals(sm_urb1), xlab = "urbaniseringsindex")
+  qqline(residuals(sm_urb1))
+  qqnorm(residuals(sm_ski1), xlab = "skilsmässoindex")
+  qqline(residuals(sm_ski1))
+  qqnorm(residuals(sm_rel1), xlab = "religiositetsindex")
+  qqline(residuals(sm_rel1))
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+```
+
+```{r}
+plot_qq(data_1, "Normal-QQ plottar för respektive förklarande variabel")
+```
+
