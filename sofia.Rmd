@@ -1,3 +1,30 @@
+```{r}
+#install.packages("olsrr")
+library("olsrr")
+```
+
+```{r}
+load("data_1.Rda")
+load("data_2.Rda")
+```
+
+
+```{r}
+model_1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_1)
+```
+
+
+```{r}
+model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_2)
+```
+
+
 Från regression av tidsperiod 1 och 2 kan vi avläsa att modell 2 har fler parametrar som är av signifikans, vilka är religionsindex och skilsmässoindex (99% signifikansnivå) samt urbaniseraingsindex (90% signifikansnivå). Modell 1 har endast en parameter av sigfinikans (90% signifikansnivå), och den har även en förklaringsgrad på 0.7, vilket är lägre än 0.74, vilket är förklaringsgraden för modell 2. 
 
 För båda modellerna har parametrarna alkoholindex och skilsmässoindex positiv korrelation med responsvariablen. Detta anser vi vara en rimlig korrelation då alkohol och skilsmässor bör ha en negativ effekt på en individs mående.
@@ -6,3 +33,127 @@ Vidare har religionsindex, urbaniseringsindex samt total arbetslöshetsindex neg
 
 Oväntade lutningskoefficienter för parametarna kan ske på grund av konliearitet mellan det förklarande variablerna. För att undersöka detta plottar vi alla variabler parvis för respektive modell för att få en överblick huruvida det finns tecken på konliearitet. Vi väljer att även undersöka VIF för alla parameterar i båda modellerna (?).
 
+
+
+
+
+
+
+## Residualer för modell 2
+
+
+```{r}
+sm_arb_män2 <- lm(självmordsfrekvens ~ arbetslöshetsindex_män, data = data_2)
+sm_arb_tot2 <- lm(självmordsfrekvens ~ arbetslöshetsindex_total, data = data_2)
+sm_alk2 <- lm(självmordsfrekvens ~ alkoholindex, data = data_2)
+sm_urb2 <- lm(självmordsfrekvens ~ urbaniseringsindex, data = data_2)
+sm_ski2 <- lm(självmordsfrekvens ~ skilsmässoindex, data = data_2)
+sm_rel2 <- lm(självmordsfrekvens ~ religiositetsindex, data = data_2)
+```
+
+```{r, fig.cap="Residualer", include=FALSE}
+plot_residuals <- function(data, title) {
+  par(mfrow = c(2,3))
+  plot(residuals(sm_arb_män2) ~ data$arbetslöshetsindex_män, 
+       xlab = "arbetslöshetsindex män",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_arb_tot2) ~ data$arbetslöshetsindex_total, 
+       xlab = "arbetslöshetsindex total",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_alk2) ~ data$alkoholindex, 
+       xlab = "alkoholindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_urb2) ~ data$urbaniseringsindex, 
+       xlab = "urbaniseringsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_ski2) ~ data$skilsmässoindex, 
+       xlab = "skilsmässoindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(sm_rel2) ~ data$religiositetsindex, 
+       xlab = "religiositetsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0)
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+```
+Vid observation av residualerna för modell 2 i figur (???) verkar det även för denna modell finnas outliers. Norrbotten län är även under perioden 1966-1968 överrepresenterade inom arbetslöshet totalt samt arbetslöshet för män. Stockholm län är överrepresenterade inom akoholkonsumtion samt skilsmässor per invånare. 
+
+
+För att utvärdera observationernas betydlense använder vi oss igen av Cooks avstånd.
+
+
+```{r}
+plot_qq <- function(data, title) {
+  par(mfrow = c(2,3))
+  qqnorm(residuals(sm_arb_män2), xlab = "arbetslöshetsindex män")
+  qqline(residuals(sm_arb_män2))
+  qqnorm(residuals(sm_arb_tot2), xlab = "arbetslöshetsindex total")
+  qqline(residuals(sm_arb_tot2))
+  qqnorm(residuals(sm_alk2), xlab = "alkoholindex")
+  qqline(residuals(sm_alk2))
+  qqnorm(residuals(sm_urb2), xlab = "urbaniseringsindex")
+  qqline(residuals(sm_urb2))
+  qqnorm(residuals(sm_ski2), xlab = "skilsmässoindex")
+  qqline(residuals(sm_ski2))
+  qqnorm(residuals(sm_rel2), xlab = "religiositetsindex")
+  qqline(residuals(sm_rel2))
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+```
+
+```{r, echo=FALSE}
+plot_qq(data_2, "Normal-QQ plottar för respektive förklarande variabel")
+plot_residuals(data_2, "Residualplottar för respektive förklarande variabel")
+```
+
+```{r, fig.cap="Cooks avstånd", echo=FALSE}
+
+ols_plot_cooksd_bar(model_2)
+```
+I figur (???) kan vi se att de potentiella outliersarna verkar vara Jönköping, Stockholms län, Gotland och Halland. Vi väljer likt tidigare resonemang att exkludera dessa observationer för att på detta sätt förbättra modell 2. 
+
+Vid exkludering av de potentiella outliersarna får vi följande regressionsmodeller.
+
+```{r, fig.cap="Cooks avstånd", echo=FALSE}
+
+data_1[6,] <- NA
+data_1[2,] <- NA
+
+data_2[6,] <- NA
+data_2[9,] <- NA
+data_2[13,] <- NA
+data_2[25,] <- NA
+
+lm_no_outlier1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex, na.action =na.omit)
+
+lm_no_outlier2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex, na.action =na.omit)
+
+model_1_no_outlier <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+model_2_no_outlier <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+
+summary(model_1_no_outlier)
+summary(model_2_no_outlier)
+
+
+```
