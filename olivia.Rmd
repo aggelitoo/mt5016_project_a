@@ -56,6 +56,9 @@ lm2 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbanisering
 
 summary(lm1) #verkar vara lite bättre att ha arbetslöshet_total istället för arbetslöshet_män
 summary(lm2)
+
+vif(lm1)
+vif(lm2)
 avPlots(lm1)
 avPlots(lm2)
 ```
