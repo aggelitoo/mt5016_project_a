@@ -1,5 +1,6 @@
 ```{r, include=FALSE}
 library(tidyverse)
+library(olsrr)
 ```
 
 ```{r, include=FALSE}
@@ -10,47 +11,54 @@ data <- read_table("A18-sjalv-win.dat",
 data_1 <- data %>%
   select("län", "y1", "x51", "x41", "x11", "x61", "x21", "x3") %>%
   rename("län" = "län",
-         "självmordsfrekvens" = "y1",
-         "arbetslöshetsindex_män" = "x51",
-         "arbetslöshetsindex_total" = "x41",
-         "alkoholindex" = "x11",
-         "urbaniseringsindex" = "x61",
-         "skilsmässoindex" = "x21",
-         "religiositetsindex" = "x3")
+         "sjmo" = "y1",
+         "arblös_män" = "x51",
+         "arblös_tot" = "x41",
+         "alko" = "x11",
+         "urban" = "x61",
+         "skilsmässo" = "x21",
+         "religio" = "x3")
 
 data_2 <- data %>%
   select("län", "y2", "x52", "x42", "x12", "x62", "x22", "x3") %>%
   rename("län" = "län",
-         "självmordsfrekvens" = "y2",
-         "arbetslöshetsindex_män" = "x52",
-         "arbetslöshetsindex_total" = "x42",
-         "alkoholindex" = "x12",
-         "urbaniseringsindex" = "x62",
-         "skilsmässoindex" = "x22",
-         "religiositetsindex" = "x3")
+         "sjmo" = "y2",
+         "arblös_män" = "x52",
+         "arblös_tot" = "x42",
+         "alko" = "x12",
+         "urban" = "x62",
+         "skilsmässo" = "x22",
+         "religio" = "x3")
 
 save(data_1, file = "data_1.Rda")
 save(data_2, file = "data_2.Rda")
 ```
 
-```{r}
-model_1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
-                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
-                skilsmässoindex + religiositetsindex)
-summary(model_1)
-```
-
 
 ```{r}
-model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
-                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
-                skilsmässoindex + religiositetsindex)
-summary(model_2)
+model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
+model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
 ```
 
 ```{r}
-pairs(data_1, 3:8)
+all_1 <- ols_step_all_possible(model_1)
+forward_1 <- ols_step_forward_p(model_1)
+backward_1 <- ols_step_backward_p(model_1)
+both_1 <- ols_step_both_p(model_1)
+```
+
+```{r}
+test <- lm(sjmo ~ ., data = data_1 %>% select(sjmo, alko, arblös_män, religio))
+```
+
+```{r}
+pairs(data_1[2:8])
 ```
 
 
 
+Rader ur modell 1 som ska tas bort:
+6, 2
+
+Rader ur modell 2 som ska tas bort:
+6, 9, 13, 25
