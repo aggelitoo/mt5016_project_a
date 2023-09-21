@@ -79,7 +79,8 @@ plot(data =data_1,urbaniseringsindex ~alkoholindex)
 plot(data =data_1,religiositetsindex ~alkoholindex)
 
 cor(data_1$religiositetsindex, data_1$alkoholindex)
-
+cor(data_1$urbaniseringsindex , data_1$alkoholindex)
+cor(data_1$skilsmässoindex , data_1$alkoholindex)
 pairs(data_1, 3:8)
 lm0 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex  + arbetslöshetsindex_män + arbetslöshetsindex_total)
 summary(lm0)
@@ -89,15 +90,37 @@ lm1 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbanisering
 
 lm2 <- lm(data=data_2, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total + arbetslöshetsindex_män )
 
-lmbest <- lm(data=data_1, formula=självmordsfrekvens ~  urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total   )
+lmmän <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex  + arbetslöshetsindex_män  )
+
+lmtot <- lm(data=data_2, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total  )
+
+summary(lmmän)
+summary(lmtot)
+
+lmbest0 <- lm(data=data_1, formula=självmordsfrekvens ~   skilsmässoindex+ religiositetsindex + arbetslöshetsindex_total  +urbaniseringsindex )
+
+
+lmbest1 <- lm(data=data_1, formula=självmordsfrekvens ~   skilsmässoindex+ religiositetsindex + arbetslöshetsindex_total   )
 
 lmtest <- lm(data=data_1, formula=självmordsfrekvens ~  alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total   )
 
+lmbest2 <- lm(data=data_1, formula=självmordsfrekvens ~  alkoholindex + religiositetsindex + arbetslöshetsindex_total   )
 
-summary(lmtest)
+lmbest3 <- lm(data=data_1, formula=självmordsfrekvens ~  alkoholindex + religiositetsindex + arbetslöshetsindex_total + urbaniseringsindex  )
 
-summary(lmbest)
-vif(lmbest)
+
+
+summary(lmbest0)
+summary(lmbest1)
+summary(lmbest2)
+summary(lmbest3)
+
+vif(lmbest0)
+vif(lmbest1)
+vif(lmbest2)
+vif(lmbest3)
+
+
 
 vif(lm1)
 vif(lm2)
@@ -107,6 +130,13 @@ summary(lm2)
 avPlots(lm1)
 avPlots(lm2)
 ```
+
+arbetslöshet tot + alkohol + religion (+ urban)
+verkar ganska ekvivalent med arbetslöshet tot + skilsmässa + religion (+urban)
+skilsmässa R adj 0.62 p-värde 3.095e-05
+alkohol R adj 0.63 p-värde 2.318e-05. religion p-värde lite sämre men de andra lite sämre 
+
+
 
 ##Added Variable Plots
 
