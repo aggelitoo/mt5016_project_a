@@ -11,18 +11,27 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+multikolinjäritet sker när två eller fler förklarande variabler är högt korrelerade med varandra. 
 
 ```{r}
 library(tidyverse)
 library(car)
+#library(sets)
 load("data_1.Rda")
 load("data_2.Rda")
 
+
+
 data_1
 data_2
+
+```
+
+
+
+```{r ,include =FALSE}
+
+  
 par(mfrow = (c(3,4)))
 plot(data =data_1,arbetslöshetsindex_män ~ arbetslöshetsindex_total )
 plot(data =data_1,skilsmässoindex  ~ alkoholindex)
@@ -45,20 +54,56 @@ plot(data =data_1,självmordsfrekvens ~ arbetslöshetsindex_män)
 plot(data =data_1,självmordsfrekvens ~ religiositetsindex)
 plot(data =data_1,självmordsfrekvens ~ urbaniseringsindex)
 par(mfrow = (c(1,1)))
+
+#combinations = list()
+#for (i in 0:5) {
+#  print(data_1[i])
+#  for (j in 0:5) {
+#    if (i!=j) {
+#      print(check_correlation(data_1[i],data_1[j]))
+#      combinations.append(set(i,j))
+#    }
+#  }
+#}
+
+```
+
+```{r}
+
+  
+par(mfrow = (c(2,3)))
+plot(data =data_1,arbetslöshetsindex_total ~alkoholindex )
+plot(data =data_1, skilsmässoindex ~alkoholindex)
+plot(data =data_1,arbetslöshetsindex_män ~alkoholindex)
+plot(data =data_1,urbaniseringsindex ~alkoholindex)
+plot(data =data_1,religiositetsindex ~alkoholindex)
+
+cor(data_1$religiositetsindex, data_1$alkoholindex)
+
+pairs(data_1, 3:8)
 lm0 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex  + arbetslöshetsindex_män + arbetslöshetsindex_total)
 summary(lm0)
 plot(lm0)
 
-lm1 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex  + arbetslöshetsindex_män )
+lm1 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex  + arbetslöshetsindex_män +arbetslöshetsindex_total )
 
-lm2 <- lm(data=data_1, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total  )
+lm2 <- lm(data=data_2, formula=självmordsfrekvens ~ alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total + arbetslöshetsindex_män )
+
+lmbest <- lm(data=data_1, formula=självmordsfrekvens ~  urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total   )
+
+lmtest <- lm(data=data_1, formula=självmordsfrekvens ~  alkoholindex + urbaniseringsindex +skilsmässoindex + religiositetsindex + arbetslöshetsindex_total   )
 
 
-summary(lm1) #verkar vara lite bättre att ha arbetslöshet_total istället för arbetslöshet_män
-summary(lm2)
+summary(lmtest)
+
+summary(lmbest)
+vif(lmbest)
 
 vif(lm1)
 vif(lm2)
+
+summary(lm1) #verkar vara lite bättre att ha arbetslöshet_total istället för arbetslöshet_män
+summary(lm2)
 avPlots(lm1)
 avPlots(lm2)
 ```
