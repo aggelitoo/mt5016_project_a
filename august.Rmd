@@ -1,6 +1,8 @@
+
 ```{r, include=FALSE}
 library(tidyverse)
 library(olsrr)
+library(car)
 ```
 
 ```{r, include=FALSE}
@@ -34,25 +36,86 @@ save(data_1, file = "data_1.Rda")
 save(data_2, file = "data_2.Rda")
 ```
 
-
+## Models
 ```{r}
 model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
 model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
 ```
 
+## Model 1
 ```{r}
 all_1 <- ols_step_all_possible(model_1)
-forward_1 <- ols_step_forward_p(model_1)
-backward_1 <- ols_step_backward_p(model_1)
-both_1 <- ols_step_both_p(model_1)
+forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
+backward_1 <- ols_step_backward_p(model_1, prem = 0.1)
+both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
 ```
 
 ```{r}
-test <- lm(sjmo ~ ., data = data_1 %>% select(sjmo, alko, arblös_män, religio))
+model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # forward
+model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_män, urban))    # backward
+model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # both
+model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblös_tot, urban,
+                                           skilsmässo,religio))               # r sq adj
+vif(model_1a)
+vif(model_1b)
+vif(model_1c)
+vif(model_1d)
 ```
 
+
+### Variable selection summary `data_1`, (alla p-gränser = 0.1)
+
+  Forward: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
+  
+  Backward: `alko`, `arblös_män` `urban` (VIF 1.76, 1.09, 1.81)
+  
+  Both: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
+  
+  Best $R_{ajd}^2$: `alko`, `arblös_tot`, `religio` (VIF 1.68, 1.13, 1.54)\
+  eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.14, 2.57, 2.77, 1.33)
+
+
+## Model 2
+```{r}
+all_2 <- ols_step_all_possible(model_2)
+forward_2 <- ols_step_forward_p(model_2, penter = 0.1)
+backward_2 <- ols_step_backward_p(model_2, prem = 0.1)
+both_2 <- ols_step_both_p(model_2, pent = 0.1, prem = 0.1)
+```
+
+```{r}
+model_2a <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # forward
+model_2b <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, arblös_män))     # backward
+model_2c <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # both
+model_2d <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_män, arblös_tot, alko,
+                                           urban, skilsmässo))          # r sq adj
+model_2e <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_tot, urban, skilsmässo,
+                                          religio))                     # r sq adj
+vif(model_2a)
+vif(model_2b)
+vif(model_2c)
+vif(model_2d)
+vif(model_2e)
+```
+
+### Variable selection summary `data_2`, (alla p-gränser = 0.1)
+
+  Forward: `alko`, `urban` (VIF 1.57, 1.57)
+  
+  Backward: `alko`, `arblös_män` (VIF 1.10, 1.10)
+  
+  Both: `alko`, `urban` (VIF 1.57, 1.57)
+  
+  Best $R_{ajd}^2$: `arblös_män`, `arblös_tot`, `alko`, `urban` `skilsmässo` (VIF 19.88, 20.79, 6.28, 3.07, 7.76)\
+  eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.03, 2.23, 2.56, 1.28)
+
+Pairwise plots
 ```{r}
 pairs(data_1[2:8])
+```
+
+```{r}
+all_2
 ```
 
 
