@@ -42,7 +42,7 @@ model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
 model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
 ```
 
-## Model 1
+## Dataset 1 (komplett data)
 ```{r}
 all_1 <- ols_step_all_possible(model_1)
 forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
@@ -75,7 +75,7 @@ vif(model_1d)
   eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.14, 2.57, 2.77, 1.33)
 
 
-## Model 2
+## Dataset 2 (komplett data)
 ```{r}
 all_2 <- ols_step_all_possible(model_2)
 forward_2 <- ols_step_forward_p(model_2, penter = 0.1)
@@ -122,6 +122,11 @@ pairs(data_1[2:8])
 ```
 
 ```{r}
+pairs(data_2[2:8])
+```
+
+
+```{r}
 all_2
 ```
 
@@ -130,22 +135,94 @@ Now to examine the cooks distance/leverage of the data sets.
 ```{r}
 ols_plot_cooksd_bar(model_1)
 ```
+
 Från plotten ovan får vi Jönköpings län som en väldigt inflytelserik
 observation. Jönköping verkar ha varit väldigt religiöst under den givna
 perioden, samtidigt som självmordindexet inte verkar vara speciellt
 avvikande. I övriga län är dessa negativt korrelerade.
 
+## Dataset 1 (Jönköping removed)
 ```{r}
 # remove jönköpings län
-model_1_reduced <- lm(sjmo ~ ., data = data_1 %>% filter(län != 6))
+data_1_red <- data_1 %>% filter(län != 6)
+model_1_red <- lm(sjmo ~ ., data = data_1_red %>% select(!län))
 ```
 
+```{r}
+all_1_red <- ols_step_all_possible(model_1_red)
+forward_1_red <- ols_step_forward_p(model_1_red, penter = 0.1)
+backward_1_red <- ols_step_backward_p(model_1_red, prem = 0.1)
+both_1_red <- ols_step_both_p(model_1_red, pent = 0.1, prem = 0.1)
+```
+
+
+```{r}
+model_1a_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblös_tot,
+                                                   skilsmässo, urban))  # forward
+model_1b_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblös_tot, alko)) # backward
+model_1c_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblös_tot,
+                                               skilsmässo, urban))      # both
+model_1d_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblös_män, urban,
+                                               skilsmässo, religio))    # r sq adj
+vif(model_1a_red)
+vif(model_1b_red)
+vif(model_1c_red)
+vif(model_1d_red)
+```
+
+### Variable selection summary `data_1_red` (Jönköpings län borttagen), (alla p-gränser = 0.1)
+
+  Forward: `religio`, `arblös_tot`, `skilsmässo`, `urban` (VIF 1.55, 1.23, 2.69, 2.74)
+  
+  Backward: `arblös_tot`, `alko` (VIF 1.16, 1.16)
+  
+  Both: `religio`, `arbslös_tot`, `skilsmässo`, `urban` (VIF 1.55, 1.23, 2.69, 2.74)
+  
+  Best $R_{ajd}^2$: `arblös_män`, `urban`, `skilsmässo`, `religio`` (VIF 1.18, 2.85, 2.79, 1.48)
 
 
 ```{r}
 ols_plot_cooksd_bar(model_2)
 ```
+__________________________________________________________________________________________
+## Dataset 2 (Norrbotten removed)
+```{r}
+# remove jönköpings län
+data_2_red <- data_2 %>% filter(!län %in% c(25))
+model_2_red <- lm(sjmo ~ ., data = data_2_red %>% select(!län))
+```
 
+```{r}
+all_2_red <- ols_step_all_possible(model_2_red)
+forward_2_red <- ols_step_forward_p(model_2_red, penter = 0.1)
+backward_2_red <- ols_step_backward_p(model_2_red, prem = 0.1)
+both_2_red <- ols_step_both_p(model_2_red, pent = 0.1, prem = 0.1)
+```
+
+
+```{r}
+model_2a_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, urban))  # forward
+model_2b_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, arblös_män)) # backward
+model_2c_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, urban))      # both
+model_2d_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, arblös_män, urban,
+                                               skilsmässo, religio))    # r sq adj
+vif(model_2a_red)
+vif(model_2b_red)
+vif(model_2c_red)
+vif(model_2d_red)
+```
+
+### Variable selection summary `data_2_red` (Norrbotten län borttagen), (alla p-gränser = 0.1)
+
+  Forward: `alko`, `urban` (VIF 1.59, 1.59)
+  
+  Backward: `alko`, `arblös_män` (VIF 1.09, 1.09)
+  
+  Both: `alko`, `urban` (VIF 1.59, 1.59)
+  
+  Best $R_{ajd}^2$: `arblös_män`, `urban`, `skilsmässo`, `religio` (VIF 1.05, 2.31, 2.56, 1.29)
+  
+  
 
 
 
