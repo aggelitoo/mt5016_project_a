@@ -59,6 +59,11 @@ Figur 1 visar parvisa plottar med alla förklarande variabler för dataset 1
 Figur 2 visar parvisa plottar med alla förklarande variabler för dataset 1
 
 
+Vi ska nu undersöka vilken kombination av förklarande variabler som är bäst för att förklara självmordsförekomsten genom att använda stegvis variabelselektion för att hitta modeller med lägst p-värde. Vi vill även hitta en modell med högt adjusted R^2 och låg korrelation mellan variabler. Vi använde forward selection, backward elimination och en variant där båda används.
+För att hitta de modeller med högst adjusted R^2 så körde vi alla 2^6 - 1 modeller och plottade respektives adjusted R^2-värde i en scatter plot. Sedan valde vi ut den modellen som låg som maxpunkt på denna kurva. I vissa fall var det flera olika kandidater till bäst adjusted R^2. I dessa fall valde vi att studera alla de olika fallen.
+
+
+
 
 
 
