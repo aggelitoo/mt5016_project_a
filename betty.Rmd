@@ -10,6 +10,7 @@ output: html_document
 ```{r, include=FALSE}
 library(car)
 library(knitr)
+library(tidyverse)
 
 load("data_1.Rda")
 load("data_2.Rda")
@@ -18,6 +19,26 @@ load("data_2.Rda")
 ```{r, include=FALSE}
 
 # Functions
+
+basic_plots <- function(data, title) {
+  par(mfrow = c(2,3))
+  plot(data$arbetslöshetsindex_män, data$självmordsfrekvens)
+  plot(data$arbetslöshetsindex_total, data$självmordsfrekvens)
+  plot(data$alkoholindex, data$självmordsfrekvens)
+  plot(data$urbaniseringsindex, data$självmordsfrekvens)
+  plot(data$skilsmässoindex, data$självmordsfrekvens)
+  plot(data$religiositetsindex, data$självmordsfrekvens)
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+
+plot_predicted_residuals <- function(multi_model, title) {
+  plot(multi_model$fitted.values, multi_model$residuals,
+       xlab = "predikterade värden",
+       ylab = "residualer",
+       main = title)
+  abline(0,0)
+} 
 
 plot_multi_residuals <- function(data, multi_model, title) {
   par(mfrow = c(2,3))
@@ -55,54 +76,12 @@ plot_multi_residuals <- function(data, multi_model, title) {
   mtext(title, side = 3, line = - 1, outer = TRUE)
 }
 
-basic_plots <- function(data, title) {
-  par(mfrow = c(2,3))
-  plot(data$arbetslöshetsindex_män, data$självmordsfrekvens)
-  plot(data$arbetslöshetsindex_total, data$självmordsfrekvens)
-  plot(data$alkoholindex, data$självmordsfrekvens)
-  plot(data$urbaniseringsindex, data$självmordsfrekvens)
-  plot(data$skilsmässoindex, data$självmordsfrekvens)
-  plot(data$religiositetsindex, data$självmordsfrekvens)
-  
-  mtext(title, side = 3, line = - 1, outer = TRUE)
-}
-
-plot_predicted_residuals <- function(multi_model, title) {
-  plot(multi_model$fitted.values, multi_model$residuals,
-       xlab = "predikterade värden",
-       ylab = "residualer",
-       main = title)
-  abline(0,0)
-} 
-
 plot_qq <- function(multi_model, title) {
-  par(mfrow = c(2,3))
   qqnorm(residuals(multi_model), 
-         xlab = "arbetslöshetsindex män",
+         xlab = "Theoretical Quantiles",
          main = title)
   qqline(residuals(multi_model))
 }
-```
-
-# Översikt data
-
-```{r, echo=FALSE}
-basic_plots(data_1, 
-            "Period 1: Självmordsfrekvens mot respektive förklarande variabel")
-basic_plots(data_2, 
-            "Period 2: Självmordsfrekvens mot respektive förklarande variabel")
-```
-
-# Models 
-
-```{r, echo=FALSE}
-multi_model_1 <- lm(data = data_1, självmordsfrekvens ~ .)
-summary(multi_model_1)
-```
-
-```{r, echo=FALSE}
-multi_model_2 <- lm(data = data_2, självmordsfrekvens ~ .)
-summary(multi_model_2)
 ```
 
 ```{r}
@@ -141,22 +120,111 @@ kable(cbind(c("Förklarande variabel",
               "0.0024")))
 ```
 
-# Residualer
+# New model data 1
 
-```{r, echo=FALSE}
-plot_predicted_residuals(multi_model_1, 
-                           "Residualer mot predikterade värden för period 1")
-plot_predicted_residuals(multi_model_2, 
-                           "Residualer mot predikterade värden för period 2")
+```{r}
+best_model_1 <- lm(data = data_1 %>% select(!län), självmordsfrekvens ~ religiositetsindex + alkoholindex + arbetslöshetsindex_total)
+
+summary(best_model_1)
+vif(best_model_1)
 ```
 
-```{r, fig.cap="Residualer", echo=FALSE}
-plot_multi_residuals(data_1, multi_model_1, "Residuals multi model period 1")
-plot_multi_residuals(data_2, multi_model_2, "Residuals multi model period 2")
+# 2.3 residuals
+
+```{r}
+par(mfrow = c(2,3))
+plot_predicted_residuals(best_model_1, "Residuals best model period 1")
+plot_qq(best_model_1, "Normal-QQ plot residuals")
+
+plot.new()
+
+plot(residuals(best_model_1) ~ data_1$arbetslöshetsindex_total, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(best_model_1) ~ data_1$alkoholindex, 
+     xlab = "alkoholindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(best_model_1) ~ data_1$religiositetsindex, 
+     xlab = "religiositetsindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0)
+
+mtext("Residuals best model period 1", side = 3, line = - 1, outer = TRUE)
 ```
 
-```{r, echo=FALSE}
-plot_qq(multi_model_1, "Period 1: Normal-QQ plottar för respektive förklarande variabel")
+# New model data 2
 
-plot_qq(multi_model_2, "Period 2: Normal-QQ plottar för respektive förklarande variabel")
+```{r}
+best_model_2 <- lm(data = data_2 %>% select(!län), självmordsfrekvens ~ arbetslöshetsindex_total+ urbaniseringsindex + skilsmässoindex + religiositetsindex)
+
+summary(best_model_2)
+vif(best_model_2)
+```
+
+# 3.5 residuals
+
+```{r}
+par(mfrow = c(2,3))
+plot_predicted_residuals(best_model_2, "Residuals best model period 2")
+plot_qq(best_model_2, "Best Model Period 2: Normal-QQ plot residuals")
+
+plot(residuals(best_model_2) ~ data_2$arbetslöshetsindex_total, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(best_model_2) ~ data_2$urbaniseringsindex, 
+     xlab = "urbaniseringsindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(best_model_2) ~ data_2$skilsmässoindex, 
+     xlab = "skilsmässoindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(best_model_2) ~ data_2$religiositetsindex, 
+     xlab = "religiositetsindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0)
+
+mtext("Residuals best model period 2", side = 3, line = - 1, outer = TRUE)
+```
+
+# Alternative model 2
+
+```{r}
+alt_model_2 <- lm(data = data_2 %>% select(!län), självmordsfrekvens ~ urbaniseringsindex + alkoholindex)
+
+summary(alt_model_2)
+vif(alt_model_2)
+```
+
+# residuals
+
+```{r}
+par(mfrow = c(2,3))
+plot_predicted_residuals(alt_model_2, "Residuals alt model period 2")
+plot_qq(alt_model_2, "Alt Model Period 2: Normal-QQ plot residuals")
+
+plot.new()
+
+plot(residuals(alt_model_2) ~ data_2$alkoholindex, 
+     xlab = "alkoholindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+plot(residuals(alt_model_2) ~ data_2$urbaniseringsindex, 
+     xlab = "urbaniseringsindex",
+     ylab = "residuals",
+     main = "Spread of residuals")
+abline(0,0) 
+
+mtext("Residuals alt model period 2", side = 3, line = - 1, outer = TRUE)
 ```
