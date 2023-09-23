@@ -7,9 +7,102 @@ output: html_document
 
 ## Projekt A
 
-```{r}
+```{r, include=FALSE}
+library(car)
+library(knitr)
+
 load("data_1.Rda")
 load("data_2.Rda")
+```
+
+```{r, include=FALSE}
+
+# Functions
+
+plot_multi_residuals <- function(data, multi_model, title) {
+  par(mfrow = c(2,3))
+  plot(residuals(multi_model) ~ data$arbetslöshetsindex_män, 
+       xlab = "arbetslöshetsindex män",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$arbetslöshetsindex_total, 
+       xlab = "arbetslöshetsindex total",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$alkoholindex, 
+       xlab = "alkoholindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$urbaniseringsindex, 
+       xlab = "urbaniseringsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$skilsmässoindex, 
+       xlab = "skilsmässoindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$religiositetsindex, 
+       xlab = "religiositetsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0)
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+
+basic_plots <- function(data, title) {
+  par(mfrow = c(2,3))
+  plot(data$arbetslöshetsindex_män, data$självmordsfrekvens)
+  plot(data$arbetslöshetsindex_total, data$självmordsfrekvens)
+  plot(data$alkoholindex, data$självmordsfrekvens)
+  plot(data$urbaniseringsindex, data$självmordsfrekvens)
+  plot(data$skilsmässoindex, data$självmordsfrekvens)
+  plot(data$religiositetsindex, data$självmordsfrekvens)
+  
+  mtext(title, side = 3, line = - 1, outer = TRUE)
+}
+
+plot_predicted_residuals <- function(multi_model, title) {
+  plot(multi_model$fitted.values, multi_model$residuals,
+       xlab = "predikterade värden",
+       ylab = "residualer",
+       main = title)
+  abline(0,0)
+} 
+
+plot_qq <- function(multi_model, title) {
+  par(mfrow = c(2,3))
+  qqnorm(residuals(multi_model), 
+         xlab = "arbetslöshetsindex män",
+         main = title)
+  qqline(residuals(multi_model))
+}
+```
+
+# Översikt data
+
+```{r, echo=FALSE}
+basic_plots(data_1, 
+            "Period 1: Självmordsfrekvens mot respektive förklarande variabel")
+basic_plots(data_2, 
+            "Period 2: Självmordsfrekvens mot respektive förklarande variabel")
+```
+
+# Models 
+
+```{r, echo=FALSE}
+multi_model_1 <- lm(data = data_1, självmordsfrekvens ~ .)
+summary(multi_model_1)
+```
+
+```{r, echo=FALSE}
+multi_model_2 <- lm(data = data_2, självmordsfrekvens ~ .)
+summary(multi_model_2)
 ```
 
 ```{r}
@@ -28,68 +121,42 @@ sm_ski2 <- lm(självmordsfrekvens ~ skilsmässoindex, data = data_2)
 sm_rel2 <- lm(självmordsfrekvens ~ religiositetsindex, data = data_2)
 ```
 
-```{r, fig.cap="Residualer"}
-plot_residuals <- function(data, title) {
-  par(mfrow = c(2,3))
-  plot(residuals(sm_arb_män1) ~ data$arbetslöshetsindex_män, 
-       xlab = "arbetslöshetsindex män",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0) 
-  plot(residuals(sm_arb_tot1) ~ data$arbetslöshetsindex_total, 
-       xlab = "arbetslöshetsindex total",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0) 
-  plot(residuals(sm_alk1) ~ data$alkoholindex, 
-       xlab = "alkoholindex",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0) 
-  plot(residuals(sm_urb1) ~ data$urbaniseringsindex, 
-       xlab = "urbaniseringsindex",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0) 
-  plot(residuals(sm_ski1) ~ data$skilsmässoindex, 
-       xlab = "skilsmässoindex",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0) 
-  plot(residuals(sm_rel1) ~ data$religiositetsindex, 
-       xlab = "religiositetsindex",
-       ylab = "residuals",
-       main = "Spread of residuals")
-  abline(0,0)
-  
-  mtext(title, side = 3, line = - 1, outer = TRUE)
-}
+```{r, echo=FALSE}
+summary(sm_arb_män2)
+summary(sm_arb_tot2)
+summary(sm_alk1)
+summary(sm_ski1)
 ```
 
 ```{r}
-plot_residuals(data_1, "Residualplottar för respektive förklarande variabel")
-```
-```{r}
-plot_qq <- function(data, title) {
-  par(mfrow = c(2,3))
-  qqnorm(residuals(sm_arb_män1), xlab = "arbetslöshetsindex män")
-  qqline(residuals(sm_arb_män1))
-  qqnorm(residuals(sm_arb_tot1), xlab = "arbetslöshetsindex total")
-  qqline(residuals(sm_arb_tot1))
-  qqnorm(residuals(sm_alk1), xlab = "alkoholindex")
-  qqline(residuals(sm_alk1))
-  qqnorm(residuals(sm_urb1), xlab = "urbaniseringsindex")
-  qqline(residuals(sm_urb1))
-  qqnorm(residuals(sm_ski1), xlab = "skilsmässoindex")
-  qqline(residuals(sm_ski1))
-  qqnorm(residuals(sm_rel1), xlab = "religiositetsindex")
-  qqline(residuals(sm_rel1))
-  
-  mtext(title, side = 3, line = - 1, outer = TRUE)
-}
+kable(cbind(c("Förklarande variabel", 
+              "arbetslöshetsindex_män",
+              "arbetslöshetsindex_total",
+              "alkoholindex",
+              "skilsmässoindex"),
+            c("P-värde",
+              "0.014",
+              "0.0022",
+              "0.00013",
+              "0.0024")))
 ```
 
-```{r}
-plot_qq(data_1, "Normal-QQ plottar för respektive förklarande variabel")
+# Residualer
+
+```{r, echo=FALSE}
+plot_predicted_residuals(multi_model_1, 
+                           "Residualer mot predikterade värden för period 1")
+plot_predicted_residuals(multi_model_2, 
+                           "Residualer mot predikterade värden för period 2")
 ```
 
+```{r, fig.cap="Residualer", echo=FALSE}
+plot_multi_residuals(data_1, multi_model_1, "Residuals multi model period 1")
+plot_multi_residuals(data_2, multi_model_2, "Residuals multi model period 2")
+```
+
+```{r, echo=FALSE}
+plot_qq(multi_model_1, "Period 1: Normal-QQ plottar för respektive förklarande variabel")
+
+plot_qq(multi_model_2, "Period 2: Normal-QQ plottar för respektive förklarande variabel")
+```
