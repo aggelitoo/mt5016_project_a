@@ -108,6 +108,13 @@ vif(model_2e)
   
   Best $R_{ajd}^2$: `arblös_män`, `arblös_tot`, `alko`, `urban` `skilsmässo` (VIF 19.88, 20.79, 6.28, 3.07, 7.76)\
   eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.03, 2.23, 2.56, 1.28)
+  
+  Från data 2 så får vi lägst p-värden när vi kombinerar alkohol med 
+  urbaniseringsindex. En alternativ modell, med högre förklaringsgrad, och
+  nästintill lika låga p-värden hade varit konstellationen arblös_tot, urban,
+  skilsmässo, religio. Detta skildrar återigen svårigheterna med att trassla
+  ut vilken variabel av skillsmässoindex och alkohol som är mest beskrivande.
+  Ortogonal data hade behövts för att komma vidare.
 
 Pairwise plots
 ```{r}
@@ -117,6 +124,28 @@ pairs(data_1[2:8])
 ```{r}
 all_2
 ```
+
+Now to examine the cooks distance/leverage of the data sets.
+
+```{r}
+ols_plot_cooksd_bar(model_1)
+```
+Från plotten ovan får vi Jönköpings län som en väldigt inflytelserik
+observation. Jönköping verkar ha varit väldigt religiöst under den givna
+perioden, samtidigt som självmordindexet inte verkar vara speciellt
+avvikande. I övriga län är dessa negativt korrelerade.
+
+```{r}
+# remove jönköpings län
+model_1_reduced <- lm(sjmo ~ ., data = data_1 %>% filter(län != 6))
+```
+
+
+
+```{r}
+ols_plot_cooksd_bar(model_2)
+```
+
 
 
 
