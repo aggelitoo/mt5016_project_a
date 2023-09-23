@@ -67,7 +67,7 @@ pairs(data_1[2:8])
 
 
 pairs(data_2[2:8])
-cor(data_1$arblös_tot, data_1$alko)
+
 ```
 
 Figur 1 visar parvisa plottar med alla förklarande variabler för dataset 1
