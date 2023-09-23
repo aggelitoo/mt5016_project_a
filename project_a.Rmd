@@ -23,6 +23,9 @@ ALL KOD SOM BEHÖVS INNAN!!! (paket osv.)
 
 
 ## 1 Första observation (summary multipel linjär regression) (Sofia)
+
+Det första vi gör för att reda ut vilka variabler som har en påverkan på självmordsfrekvens är att observera den insamlade datan åtskilda för de olika perioderna med alla variabler inkluderade.  Från multipel regression med självmordsindex som responsvariabel och resterande variabler som förklarande, för tidsperiod 1 och 2 
+
 ```{r, echo=FALSE}
 model_1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
                 arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
@@ -37,7 +40,8 @@ model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
                 skilsmässoindex + religiositetsindex)
 summary(model_2)
 ```
-Det första vi gör för att reda ut vilka variabler som har en påverkan på självmordsfrekvens är att observera den insamlade datan åtskilda för de olika perioderna med alla variabler inkluderade.  Från multipel regression med självmordsindex som responsvariabel och resterande variabler som förklarande, för tidsperiod 1 och 2 kan vi avläsa att för modell 1 verkar religiositetsindex vara den variabel med  lägst p-värde på 0.065. För modell 2 har vi 3 förklarande variabler med lågt p-värde, vilket är religiositetsindex, skilsmässoindex samt urbaniseringsindex med p-värdena 0.041, 0.037 samt 0.060. Modell har även en lägre förklaringsgrad på 0.7, jämfört med förklaringsgraden 0.74 för modell 2. 
+
+Från summeringen av modell 1 verkar religiositetsindex vara den variabel med  lägst p-värde på 0.065. För modell 2 har vi 3 förklarande variabler med lågt p-värde, vilket är religiositetsindex, skilsmässoindex samt urbaniseringsindex med p-värdena 0.041, 0.037 samt 0.060. Modell har även en lägre förklaringsgrad på 0.7, jämfört med förklaringsgraden 0.74 för modell 2. 
 
 För båda modellerna har variablerna alkoholindex och skilsmässoindex positiv korrelation med responsvariabeln, medan religiositetsindex, urbaniseringsindex samt total arbetslöshetsindex negativ korrelation. 
 
@@ -58,13 +62,17 @@ Figur 1 visar parvisa plottar med alla förklarande variabler för dataset 1
 
 Figur 2 visar parvisa plottar med alla förklarande variabler för dataset 1
 
+[TEXT OM PAIRVISE PLOTS] 
 
 Vi ska nu undersöka vilken kombination av förklarande variabler som är bäst för att förklara självmordsförekomsten genom att använda stegvis variabelselektion för att hitta modeller med lägst p-värde. Vi vill även hitta en modell med högt adjusted R^2 och låg korrelation mellan variabler. Vi använde forward selection, backward elimination och en variant där båda används.
 För att hitta de modeller med högst adjusted R^2 så körde vi alla 2^6 - 1 modeller och plottade respektives adjusted R^2-värde i en scatter plot. Sedan valde vi ut den modellen som låg som maxpunkt på denna kurva. I vissa fall var det flera olika kandidater till bäst adjusted R^2. I dessa fall valde vi att studera alla de olika fallen.
 
 
 
+3.3 Cooks avstånd 
 
+Från plotten ovan ser vi att Jönköpings län som en väldigt inflytelserik
+observation. Jönköping har väldigt högt religiositetsindex under den tidsperiod 1 (1963-1965), samtidigt som självmordindexet inte verkar påverkas särskilt mycket av detta. I övriga län är religion och självmord negativt korrelerade.
 
 
 
