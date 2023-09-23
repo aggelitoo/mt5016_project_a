@@ -16,15 +16,32 @@ Syftet med detta projekt är att undersöka ifall det finns ett samband mellan a
 
 För att undersöka hypotesen: alkohol har en påverkan på självmordsförekomst så utför vi multipel linjär regression med självmordsförekomst som responsvariabel och de resterande variablerna som förklarande variabler. Detta görs separat för de två dataseten. Vi undersöker bland annat hur stor multikolinjäritet alkohol har med de andra variablerna och vilken kombination av variabler som tycks vara bäst anpassad, genom att kolla på R^2-värdet och p-värdet för modellen, för att se hur stor inverkan alkoholkonsumtion verkar ha på självmordsförekomsten. Genom att studera dataseten för sig kan vi även se ifall det verkar ha skett någon förändring mellan de två tidsperioderna.
 
-
+ALL KOD SOM BEHÖVS INNAN!!! (paket osv.)
 ```{r}
 
 ```
 
 
-
-```{r}
-
+## 1 Första observation (summary multipel linjär regression) (Sofia)
+```{r, echo=FALSE}
+model_1 <- lm(data = data_1, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_1)
 ```
 
+
+```{r, echo=FALSE}
+model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
+                arbetslöshetsindex_total + alkoholindex + urbaniseringsindex +
+                skilsmässoindex + religiositetsindex)
+summary(model_2)
+```
+Från multipel regression för tidsperiod 1 och 2 kan vi avläsa att för modell 1 verkar religiositetsindex vara den variabel med  lägst p-värde på 0.065. För modell 2 har vi 3 förklarande variabler med lågt p-värde, vilket är religiositetsindex, skilsmässoindex samt urbaniseringsindex med p-värdena 0.041, 0.037 samt 0.060. Modell har även en lägre förklaringsgrad på 0.7, jämfört med förklaringsgraden 0.74 för modell 2. 
+
+För båda modellerna har variablerna alkoholindex och skilsmässoindex positiv korrelation med responsvariabeln, medan religiositetsindex, urbaniseringsindex samt total arbetslöshetsindex negativ korrelation. 
+
+Någonting som vi bör noteras är att arbetslöshetsindex för män och totalt har en uppenbar korrelation då antal arbetslösa män har en direkt påverkan på arbetslösheten totalt. Detta kan resultera i missvisande resultat i de linjära regressionerna. 
+
+För att undersöka detta samband samt andra potentiella fall av kollinearitet mellan det förklarande variablerna undersöker vi alla variabler parvis.
 
