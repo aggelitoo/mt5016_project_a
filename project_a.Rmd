@@ -37,11 +37,32 @@ model_2 <- lm(data = data_2, självmordsfrekvens ~ arbetslöshetsindex_män +
                 skilsmässoindex + religiositetsindex)
 summary(model_2)
 ```
-Från multipel regression för tidsperiod 1 och 2 kan vi avläsa att för modell 1 verkar religiositetsindex vara den variabel med  lägst p-värde på 0.065. För modell 2 har vi 3 förklarande variabler med lågt p-värde, vilket är religiositetsindex, skilsmässoindex samt urbaniseringsindex med p-värdena 0.041, 0.037 samt 0.060. Modell har även en lägre förklaringsgrad på 0.7, jämfört med förklaringsgraden 0.74 för modell 2. 
+Det första vi gör för att reda ut vilka variabler som har en påverkan på självmordsfrekvens är att observera den insamlade datan åtskilda för de olika perioderna med alla variabler inkluderade.  Från multipel regression med självmordsindex som responsvariabel och resterande variabler som förklarande, för tidsperiod 1 och 2 kan vi avläsa att för modell 1 verkar religiositetsindex vara den variabel med  lägst p-värde på 0.065. För modell 2 har vi 3 förklarande variabler med lågt p-värde, vilket är religiositetsindex, skilsmässoindex samt urbaniseringsindex med p-värdena 0.041, 0.037 samt 0.060. Modell har även en lägre förklaringsgrad på 0.7, jämfört med förklaringsgraden 0.74 för modell 2. 
 
 För båda modellerna har variablerna alkoholindex och skilsmässoindex positiv korrelation med responsvariabeln, medan religiositetsindex, urbaniseringsindex samt total arbetslöshetsindex negativ korrelation. 
 
-Någonting som vi bör noteras är att arbetslöshetsindex för män och totalt har en uppenbar korrelation då antal arbetslösa män har en direkt påverkan på arbetslösheten totalt. Detta kan resultera i missvisande resultat i de linjära regressionerna. 
+Någonting som bör noteras är att arbetslöshetsindex för män och totalt har en 
+uppenbar korrelation då antal arbetslösa män har en direkt påverkan på arbetslösheten totalt. Detta kan resultera i missvisande resultat i de linjära regressionerna. För att undersöka detta samband samt andra potentiella fall av kollinearitet mellan de förklarande variablerna undersöker vi alla variabler parvis.
 
-För att undersöka detta samband samt andra potentiella fall av kollinearitet mellan det förklarande variablerna undersöker vi alla variabler parvis.
+
+
+```{r, fig.cap = "Parvisa variabelsamband"}
+pairs(data_1[2:8])
+
+
+pairs(data_2[2:8])
+cor(data_1$arblös_tot, data_1$alko)
+```
+
+Figur 1 visar parvisa plottar med alla förklarande variabler för dataset 1
+
+Figur 2 visar parvisa plottar med alla förklarande variabler för dataset 1
+
+
+
+
+
+
+
+
 
