@@ -9,6 +9,18 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(car)
+library(olsrr)
+
+```
+
+\renewcommand{\tablename}{Tabell}
+\renewcommand{\figurename}{Figur}
+
 ##Övningsprojekt a 18 Samband mellan alkolhol och självmord?
 
 Syftet med detta projekt är att undersöka ifall det finns ett samband mellan alkoholmissbruk och självmordsförekomst. För att göra detta studerar vi två dataset över registerdata från svenska län under 60-talet över tidsperioderna 1963-65 och 1966-1968. Datan har samlats in från 25 län och innehåller 6 variabler som kan tänkas ha en påverkan på självmordsförekomsten i länen. Följande variabler har studerats: 
