@@ -28,7 +28,10 @@ För att undersöka hypotesen: alkohol har en påverkan på självmordsförekoms
 
 ```{r}
 
-```
+load("data_1.Rda")
+load("data_2.Rda")
+
+``` 
 
 
 ## 1 Första observation (summary multipel linjär regression) (Sofia)
