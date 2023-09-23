@@ -1,0 +1,30 @@
+---
+title: "ProjektA_github"
+author: "Olivia Buhr"
+date: "2023-09-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+##Övningsprojekt a 18 Samband mellan alkolhol och självmord?
+
+Syftet med detta projekt är att undersöka ifall det finns ett samband mellan alkoholmissbruk och självmordsförekomst. För att göra detta studerar vi två dataset över registerdata från svenska län under 60-talet över tidsperioderna 1963-65 och 1966-1968. Datan har samlats in från 25 län och innehåller 6 variabler som kan tänkas ha en påverkan på självmordsförekomsten i länen. Följande variabler har studerats: 
+(1) Alkoholindex: Årsmedelförbrukningen av alkohol per capita, räknat på befolkning över 15 års ålder. Förbrukningen räknat per capita anses stå i dokumenterat starkt samband med andelen missbrukare, och det är den andelen som man helst skulle velat ha haft som variabel. (2) Skilsmässoindex: procentandel skilsmässor bland män år 1964 resp. 1967. (3) Religiositetsindex: Summan av procentandel statskyrkliga som deltar i gudtjänster och procentandel frikyrkliga. Bara ett värde, dvs gemensamt för båda tidsperioderna. (4) Arbetslöshetsindex totalt: Andelen arbetslösa i medeltal över tidsperioderna. (5) Arbetslöshetsindex män: Motsvarande räknat bara på den manliga delen av befolkningen. (6) Urbaniseringsindex: Procentandel av befolkningen bosatt i tätbefolkat område
+
+För att undersöka hypotesen: alkohol har en påverkan på självmordsförekomst så utför vi multipel linjär regression med självmordsförekomst som responsvariabel och de resterande variablerna som förklarande variabler. Detta görs separat för de två dataseten. Vi undersöker bland annat hur stor multikolinjäritet alkohol har med de andra variablerna och vilken kombination av variabler som tycks vara bäst anpassad, genom att kolla på R^2-värdet och p-värdet för modellen, för att se hur stor inverkan alkoholkonsumtion verkar ha på självmordsförekomsten. Genom att studera dataseten för sig kan vi även se ifall det verkar ha skett någon förändring mellan de två tidsperioderna.
+
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
