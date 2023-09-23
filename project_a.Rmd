@@ -28,7 +28,7 @@ Syftet med detta projekt är att undersöka ifall det finns ett samband mellan a
 
 För att undersöka hypotesen: alkohol har en påverkan på självmordsförekomst så utför vi multipel linjär regression med självmordsförekomst som responsvariabel och de resterande variablerna som förklarande variabler. Detta görs separat för de två dataseten. Vi undersöker bland annat hur stor multikolinjäritet alkohol har med de andra variablerna och vilken kombination av variabler som tycks vara bäst anpassad, genom att kolla på R^2-värdet och p-värdet för modellen, för att se hur stor inverkan alkoholkonsumtion verkar ha på självmordsförekomsten. Genom att studera dataseten för sig kan vi även se ifall det verkar ha skett någon förändring mellan de två tidsperioderna.
 
-ALL KOD SOM BEHÖVS INNAN!!! (paket osv.)
+
 ```{r}
 
 ```
@@ -79,7 +79,63 @@ Figur 2 visar parvisa plottar med alla förklarande variabler för dataset 1
 Vi ska nu undersöka vilken kombination av förklarande variabler som är bäst för att förklara självmordsförekomsten genom att använda stegvis variabelselektion för att hitta modeller med lägst p-värde. Vi vill även hitta en modell med högt adjusted R^2 och låg korrelation mellan variabler. Vi använde forward selection, backward elimination och en variant där båda används.
 För att hitta de modeller med högst adjusted R^2 så körde vi alla 2^6 - 1 modeller och plottade respektives adjusted R^2-värde i en scatter plot. Sedan valde vi ut den modellen som låg som maxpunkt på denna kurva. I vissa fall var det flera olika kandidater till bäst adjusted R^2. I dessa fall valde vi att studera alla de olika fallen.
 
+## Models
+```{r}
+model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
+model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
+```
 
+## Model 1
+```{r}
+all_1 <- ols_step_all_possible(model_1)
+forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
+backward_1 <- ols_step_backward_p(model_1, prem = 0.1)
+both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
+```
+
+```{r}
+model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # forward
+model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_män, urban))    # backward
+model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # both
+model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblös_tot, urban,
+                                           skilsmässo,religio))               # r sq adj
+
+
+```
+
+
+### Variable selection summary `data_1`, (alla p-gränser = 0.1)
+
+  Forward: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
+  
+  Backward: `alko`, `arblös_män` `urban` (VIF 1.76, 1.09, 1.81)
+  
+  Both: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
+  
+  Bästa $R_{ajd}^2$ för alla modeller: `alko`, `arblös_tot`, `religio` (VIF 1.68, 1.13, 1.54)\
+  och `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.14, 2.57, 2.77, 1.33)
+
+
+
+## Model 2
+```{r}
+all_2 <- ols_step_all_possible(model_2)
+forward_2 <- ols_step_forward_p(model_2, penter = 0.1)
+backward_2 <- ols_step_backward_p(model_2, prem = 0.1)
+both_2 <- ols_step_both_p(model_2, pent = 0.1, prem = 0.1)
+```
+
+```{r}
+model_2a <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # forward
+model_2b <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, arblös_män))     # backward
+model_2c <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # both
+model_2d <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_män, arblös_tot, alko,
+                                           urban, skilsmässo))          # r sq adj
+model_2e <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_tot, urban, skilsmässo,
+                                          religio))                     # r sq adj
+
+
+```
 
 3.3 Cooks avstånd 
 
