@@ -3,8 +3,8 @@ title: "ProjektA_github"
 author: "Olivia Buhr"
 date: "2023-09-23"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 
@@ -20,21 +20,16 @@ library(olsrr)
 \renewcommand{\tablename}{Tabell}
 \renewcommand{\figurename}{Figur}
 
+## Inledning
 
+Syftet med detta projekt är att undersöka ifall det finns ett samband mellan alkoholmissbruk och självmordsförekomst. För att göra detta studerar vi två dataset över registerdata från svenska län under 60-talet över tidsperioderna 1963-65 och 1966-1968. Datan har samlats in från 25 län och innehåller 6 variabler som kan tänkas ha en påverkan på självmordsförekomsten i länen. Följande variabler har studerats: 
+(1) Alkoholindex: Årsmedelförbrukningen av alkohol per capita, räknat på befolkning över 15 års ålder. Förbrukningen räknat per capita anses stå i dokumenterat starkt samband med andelen missbrukare, och det är den andelen som man helst skulle velat ha haft som variabel. (2) Skilsmässoindex: procentandel skilsmässor bland män år 1964 resp. 1967. (3) Religiositetsindex: Summan av procentandel statskyrkliga som deltar i gudtjänster och procentandel frikyrkliga. Bara ett värde, dvs gemensamt för båda tidsperioderna. (4) Arbetslöshetsindex totalt: Andelen arbetslösa i medeltal över tidsperioderna. (5) Arbetslöshetsindex män: Motsvarande räknat bara på den manliga delen av befolkningen. (6) Urbaniseringsindex: Procentandel av befolkningen bosatt i tätbefolkat område
 
-Inledning
-I det här projektet ska vi undersöka vilka faktorer som bäst kan förklara skillnader i självmordsfrekvens mellan olika län i Sverige. Det finns forskning som antyder att alkoholmissbruk kan föregå självmord, vi är därför särskilt intresserade av sambandet mellan dessa faktorer. Till vår hjälp har vi två dataset baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa dataset innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
-Alkoholindex: genomsnittlig förbrukning av alkohol per person och år bland befolkningen över 15 år. Detta anses vara en starkt korrelerad faktor med andelen alkoholmissbrukare.
-Skilsmässoindex: andelen skilsmässor bland män under åren 1964 respektive 1967.
-Religiositetsindex: sammanvägning av andelen som tillhör statskyrkan och deltar i gudstjänster samt andelen som tillhör frikyrkliga samfund. Konstant för båda tidsperioderna.
-Arbetslöshetsindex totalt: andelen arbetslösa i mitten av de två tidsperioderna.
-Arbetslöshetsindex män: motsvarande arbetslöshet total, men endast för den manliga befolkningen.
-Urbaniseringsindex: andelen av befolkningen som bor i tätbefolkade områden.
 
 ## Syfte 
 För att genomföra vår undersökning kommer vi använda oss av multipel linjär regression. Självmordsfrekvens är vår responsvariabel och övriga förklarande variabler. Då vi är intresserade av att förklara just självmordsfrekvens är det lämpligt att ha just denna variabel som responsvariabel. Det bör dock tilläggas att detta inte implicerar något kausalt samband. Huruvida det är den förklarande variabeln som påverkar självmordsfrekvensen, tvärt om eller en helt annan variabel vet vi inte. Den här undersökningen syftar endast till att förklara förändringen mellan länen. Vi kommer analysera de två perioderna separat då det kan finnas viktiga skillnader i datan. Då vi endast har mätdata från två tidpunkter är det svårt att uttala sig om eventuell förändring över tid. Däremot kan vi upptäcka eventuella skillnader mellan de två tidsperioderna och analysera dessa. För att uppfylla undersökningens syfte kommer vi lägga stor vikt vid valet av multipel linjär regressionsmodell. För att ta fram en så lämplig modell som möjligt kommer vi studera och analysera datan utifrån flera olika aspekter. Vi undersöker bland annat multikolinjäritet för olika kombinationer av variabler, R^2-värden hos olika modeller och p-värden för olika variabler i olika modeller. Då vi är särskilt intresserade av modeller som innehåller alkoholindex som förklarande variabel, men vi undersöker även om det finns andra modeller som kan förklara variationen bättre. 
 
-Det vi kom fram till....
+
 
 ```{r}
 
