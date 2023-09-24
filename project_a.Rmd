@@ -2,7 +2,9 @@
 title: "ProjektA_github"
 author: "Olivia Buhr"
 date: "2023-09-23"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 
@@ -18,12 +20,21 @@ library(olsrr)
 \renewcommand{\tablename}{Tabell}
 \renewcommand{\figurename}{Figur}
 
-##Övningsprojekt a 18 Samband mellan alkolhol och självmord?
 
-Syftet med detta projekt är att undersöka ifall det finns ett samband mellan alkoholmissbruk och självmordsförekomst. För att göra detta studerar vi två dataset över registerdata från svenska län under 60-talet över tidsperioderna 1963-65 och 1966-1968. Datan har samlats in från 25 län och innehåller 6 variabler som kan tänkas ha en påverkan på självmordsförekomsten i länen. Följande variabler har studerats: 
-(1) Alkoholindex: Årsmedelförbrukningen av alkohol per capita, räknat på befolkning över 15 års ålder. Förbrukningen räknat per capita anses stå i dokumenterat starkt samband med andelen missbrukare, och det är den andelen som man helst skulle velat ha haft som variabel. (2) Skilsmässoindex: procentandel skilsmässor bland män år 1964 resp. 1967. (3) Religiositetsindex: Summan av procentandel statskyrkliga som deltar i gudtjänster och procentandel frikyrkliga. Bara ett värde, dvs gemensamt för båda tidsperioderna. (4) Arbetslöshetsindex totalt: Andelen arbetslösa i medeltal över tidsperioderna. (5) Arbetslöshetsindex män: Motsvarande räknat bara på den manliga delen av befolkningen. (6) Urbaniseringsindex: Procentandel av befolkningen bosatt i tätbefolkat område
 
+Inledning
+I det här projektet ska vi undersöka vilka faktorer som bäst kan förklara skillnader i självmordsfrekvens mellan olika län i Sverige. Det finns forskning som antyder att alkoholmissbruk kan föregå självmord, vi är därför särskilt intresserade av sambandet mellan dessa faktorer. Till vår hjälp har vi två dataset baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa dataset innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
+Alkoholindex: genomsnittlig förbrukning av alkohol per person och år bland befolkningen över 15 år. Detta anses vara en starkt korrelerad faktor med andelen alkoholmissbrukare.
+Skilsmässoindex: andelen skilsmässor bland män under åren 1964 respektive 1967.
+Religiositetsindex: sammanvägning av andelen som tillhör statskyrkan och deltar i gudstjänster samt andelen som tillhör frikyrkliga samfund. Konstant för båda tidsperioderna.
+Arbetslöshetsindex totalt: andelen arbetslösa i mitten av de två tidsperioderna.
+Arbetslöshetsindex män: motsvarande arbetslöshet total, men endast för den manliga befolkningen.
+Urbaniseringsindex: andelen av befolkningen som bor i tätbefolkade områden.
+
+## Syfte 
 För att genomföra vår undersökning kommer vi använda oss av multipel linjär regression. Självmordsfrekvens är vår responsvariabel och övriga förklarande variabler. Då vi är intresserade av att förklara just självmordsfrekvens är det lämpligt att ha just denna variabel som responsvariabel. Det bör dock tilläggas att detta inte implicerar något kausalt samband. Huruvida det är den förklarande variabeln som påverkar självmordsfrekvensen, tvärt om eller en helt annan variabel vet vi inte. Den här undersökningen syftar endast till att förklara förändringen mellan länen. Vi kommer analysera de två perioderna separat då det kan finnas viktiga skillnader i datan. Då vi endast har mätdata från två tidpunkter är det svårt att uttala sig om eventuell förändring över tid. Däremot kan vi upptäcka eventuella skillnader mellan de två tidsperioderna och analysera dessa. För att uppfylla undersökningens syfte kommer vi lägga stor vikt vid valet av multipel linjär regressionsmodell. För att ta fram en så lämplig modell som möjligt kommer vi studera och analysera datan utifrån flera olika aspekter. Vi undersöker bland annat multikolinjäritet för olika kombinationer av variabler, R^2-värden hos olika modeller och p-värden för olika variabler i olika modeller. Då vi är särskilt intresserade av modeller som innehåller alkoholindex som förklarande variabel, men vi undersöker även om det finns andra modeller som kan förklara variationen bättre. 
+
+Det vi kom fram till....
 
 ```{r}
 
@@ -48,18 +59,14 @@ Figur 1 visar parvisa plottar med alla förklarande variabler för dataset 1
 
 Figur 2 visar parvisa plottar med alla förklarande variabler för dataset 1
 
-I Figur 1 kan vi se att den totala arbetslösheten har stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
+I Figur 1 kan vi se att den totala arbetslösheten har stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. Självmordsfrekvens verkar vara negativt korrelerad med religiositetindex samt positivt korrelerad med skiljsmässoindex och alkoholindex. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna.
 
-Självmordsfrekvens verkar vara negativt korrelerad med religiositetindex samt positivt korrelerad med skiljsmässoindex och alkoholindex. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna.
-
-I Figur 2 kan vi se, precis som i figur 1, att den totala arbetslösheten har en stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
-
-Till skillnad från period 1 så är självmordsfrekvens och religiositetindex inte lika tydligt negativt korrelerade för period 2. Skiljsmässoindex och alkoholindex verkar dock fortfarande ha en positiv korrelation med självmordfrekvens. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna, möjligtvis att det kan finnas en negativ korrelation med arbetslöshet total. Vi kan eventuellt se en antydan till ett kvadratiskt samband mellan urbaniseringsindex och självmordsfrekvens. 
+I Figur 2 kan vi se, precis som i figur 1, att den totala arbetslösheten har en stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. Till skillnad från period 1 så är självmordsfrekvens och religiositetindex inte lika tydligt negativt korrelerade för period 2. Skiljsmässoindex och alkoholindex verkar dock fortfarande ha en positiv korrelation med självmordfrekvens. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna, möjligtvis att det kan finnas en negativ korrelation med arbetslöshet total. Vi kan eventuellt se en antydan till ett kvadratiskt samband mellan urbaniseringsindex och självmordsfrekvens. 
 
 Den starka korrelationen mellan arbetslöshet total och arbetslöshet män var väntad då antalet arbetslösa män är en delmängd av antalet arbetslösa totalt. Detta innebär att båda dessa variabler förklarar i princip samma sak, vi kommer därför med största sannolikhet inte inkludera båda i vår slutgiltiga modell. Att inkludera starkt korrelerade förklarande variabler i en multipel regressionsmodell kan vara problematiskt då detta kan indikera kolinjäritet. Det räcker dock inte att enbart undersöka plottar, vi behöver även någon sorts mått för att avgöra graden av kolinjäritet mellan variablerna. VIF (variance inflation factor) är ett mått på (multi)kolinjäritet, d.v.s. kolinjäritet mellan två eller flera variabler. Ett VIF-värde nära noll tyder på en låg kolinjäritet, medan ett högt tyder på en hög kolinjäritet. Ett VIF-värde över fem anses ofta vara för högt, denna gräns kan dock variera beroende på t.ex. forskningsområde eller studie. Problemet med ett allt för högt VIF-värde är att skattningar av parametrar och p-värden kan bli opålitliga. Vi kommer därför studera VIF-värden noga när vi väljer vår modell. 
 
 
-Variabelselektion 
+## Variabelselektion 
 Valet av förklarande variabler är helt centralt när vi väljer vilken modell som bäst kan besvara vår frågeställning. Det finns flera metoder för variabelselektion, vi kommer använda oss av forward selection, backward elimination och stepwise regression. Detta är stegvisa metoder som bygger på att välja ut de förklarande variabler som ger högst p-värde i modellen. Det finns dock flera aspekter vi behöver ta hänsyn till, en av dem är förklaringsgraden, R^2. Notera att vi väljer R^2-adjusted istället för R^2 för att undvika överanpassning hos modellen. Då vi endast har sex potentiella förklarande variabler har vi möjligheten att undersöka alla möjliga kombinationer av variabler (63 stycken). Vi kommer därför beräkna R^2-adjusted för samtliga kombinationer av de förklarande variablerna och sedan välja ut de modeller med högst värde. 
 Med dessa metoder kommer vi få flera potentiella kandidater till vår modell. Därefter kommer vi granska respektive kandidat och göra en sammanvägning av R^2-adjusted, p- och VIF-värden för att hitta den bästa modellen. Det bör tilläggas att vi inte kommer använda oss av något mått på prediktionsförmåga hos modellen, detta eftersom syftet är att förklara snarare än att prediktera.
 
