@@ -993,7 +993,7 @@ Om det finns hög multikolinjäritet i en regressionsmodell kan p-värdena bli o
 
 Något vi har noterat med det givna datasetet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
 
-Slutsats
+## Slutsats
 Sammanfattningsvis har vi fastställt två olika modeller som vi anser är bäst för att förklara självmordsfrekvensen i Sverige under perioden år 1963-1965 samt 1966-1968. Utan att ta hänsyn till inflytelserika observationer har vi tagit fram en modell för respektive tidsperiod där den första har förklarande variabler alkoholindex, religiositetsindex och arbetslöshetsindex total och den andra har förklarande variabler religiositetsindex, urbaniseringsindex, skilsmässoindex och arbetslöshetsindex total. Sammantaget är det inte självklart vilka variabler som bäst förklarar variationen i självmordsfrekvens mellan länen då variablerna skiljer sig mellan tidsperioderna. Alkoholindex verkar kunna vara en bra förklarande faktor men kan bytas ut mot skilsmässoindex och urbaniseringsindex, då dessa variabler också kan förklara variationen i självmordsfrekvensen mellan länen (tillsammans med arbetslöshet total). 
 
 
