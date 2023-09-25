@@ -9,10 +9,9 @@ output:
 
 
 ```{r setup, include=FALSE}
-#install.packages("tidyverse")
-#install.packages("kableExtra")
+
 knitr::opts_chunk$set(echo = FALSE)
-#library(tidyverse)
+library(tidyverse)
 library(car)
 library(olsrr)
 library(knitr)
