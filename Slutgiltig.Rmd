@@ -17,15 +17,46 @@ library(olsrr)
 library(knitr)
 library(kableExtra)
 ```
+```{r, include=FALSE}
+data <- read_table("A18-sjalv-win.dat",
+                   col_names = c("län", "y1", "y2", "x51", "x41", "x52", "x42",
+                                 "x11", "x12", "x61", "x62", "x21", "x22", "x3"))
 
+data_1 <- data %>%
+  select("län", "y1", "x51", "x41", "x11", "x61", "x21", "x3") %>%
+  rename("län" = "län",
+         "sjmo" = "y1",
+         "arblösMän" = "x51",
+         "arblösTot" = "x41",
+         "alko" = "x11",
+         "urban" = "x61",
+         "skilsmässo" = "x21",
+         "religio" = "x3")
 
+data_2 <- data %>%
+  select("län", "y2", "x52", "x42", "x12", "x62", "x22", "x3") %>%
+  rename("län" = "län",
+         "sjmo" = "y2",
+         "arblösMän" = "x52",
+         "arblösTot" = "x42",
+         "alko" = "x12",
+         "urban" = "x62",
+         "skilsmässo" = "x22",
+         "religio" = "x3")
+
+save(data_1, file = "data_1.Rda")
+save(data_2, file = "data_2.Rda")
+```
+
+## Models
+```{r}
+model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
+model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
+```
 
 ```{r, echo=FALSE}
 load("data_1.Rda")
 load("data_2.Rda")
-
-model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
-model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
 ```
 
 
@@ -199,27 +230,29 @@ Vi vill notera att vid detta tillfälle kommer vi inte ta hänsyn till inflytels
 
 För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{Adjusted}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adjusted}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan. 
 
-```{r, echo=FALSE}
+## Dataset 1 (komplett data)
+```{r}
 all_1 <- ols_step_all_possible(model_1)
 forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
 backward_1 <- ols_step_backward_p(model_1, prem = 0.1)
 both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
 ```
 
-```{r, echo=FALSE}
+```{r}
 model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # forward
 model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösMän, urban))    # backward
 model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # both
 model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # r sq adj
 model_1e <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblösTot, urban,
                                            skilsmässo,religio))              # r sq adj
-#vif(model_1a)
-#vif(model_1b)
-#vif(model_1c)
-#vif(model_1d)
-#vif(model_1e)
+vif(model_1a)
+vif(model_1b)
+vif(model_1c)
+vif(model_1d)
+vif(model_1e)
 ```
-```{r, echo=FALSE}
+
+```{r}
 # for created table of nested data
 nested_data_1 <- data.frame(
   Metod= c(rep("Backward elimination", 3),
@@ -262,7 +295,7 @@ nested_data_1 <- data.frame(
 # Create a table with kable
 table_1 <- nested_data_1 %>%
   kable(format = "latex", escape = FALSE, 
-        caption = "Potentiella modeller Period 1 (p-gränser för algo. = 0.1)") %>%
+        caption = "Potentiella modeller Period 1 (p-gränser för algo.=0.1)") %>%
   
   #column_spec(column = 1, bold = TRUE) %>% 
   
@@ -273,6 +306,29 @@ table_1 <- nested_data_1 %>%
   # Add some table formatting (optional)
   kable_styling("striped", full_width = FALSE) %>%
   row_spec(0, bold = TRUE, background = "lightgray")
+
+
+# Display the table
+table_1
+```
+
+```{r}
+# dataset 1 adjusted r sq plot
+all_1 %>%
+ggplot(aes(x=n, y=adjr, label = predictors)) +
+  geom_point() +
+  geom_point(data=all_1 %>% filter(adjr > 0.626),
+             pch=24,
+             size=4,
+             colour="purple") +
+  xlab("Number of variables (1-6)") +
+  ylab("Adjusted R squared") +
+  ggtitle("Adjusted R squared - all variable constellations Period 1") +
+  geom_text(data = all_1 %>% filter(adjr > 0.626),
+            vjust=-1, hjust=0.2,
+            angle = 15) +
+  ylim(0, 0.8)
+```
 
 
 # Display the table
