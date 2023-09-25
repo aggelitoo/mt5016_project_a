@@ -980,6 +980,8 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
   ylim(0, 0.9) +
   xlim(1, 8)
 ```
+
+
 ## Diskussion
 Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i dataseten. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
 
