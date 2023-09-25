@@ -228,7 +228,9 @@ Med dessa metoder kommer vi få flera potentiella kandidater till vår modell. D
 
 Vi vill notera att vid detta tillfälle kommer vi inte ta hänsyn till inflytelserika observationer då vi inte har vidare kunskap om den insamlade datan. Vi kommer istället att diskutera potentiella modeller med hänseende till detta senare i rapporten. 
 
-För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{Adjusted}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adjusted}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan. 
+För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{adj}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adj}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan.
+
+### Period 1
 
 ```{r, echo=FALSE}
 all_1 <- ols_step_all_possible(model_1)
@@ -299,7 +301,8 @@ table_1 <- nested_data_1 %>%
   
   # Add some table formatting (optional)
   kable_styling("striped", full_width = FALSE) %>%
-  row_spec(0, bold = TRUE, background = "lightgray")
+  row_spec(0, bold = TRUE, background = "lightgray") %>%
+  kable_styling(latex_options = "HOLD_position")
 
 
 # Display the table
@@ -325,14 +328,112 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 ```
 
 
-# Display the table
-table_1
-```
-
-
-## Residualplottar - figurtext
+### Residualplottar - Period 1
 
 Modell 1c
-Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband mellan residualerna. 
+Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband mellan residualerna.
+
+### Period 2
+
+```{r, echo=FALSE}
+all_2 <- ols_step_all_possible(model_2)
+forward_2 <- ols_step_forward_p(model_2, penter = 0.1)
+backward_2 <- ols_step_backward_p(model_2, prem = 0.1)
+both_2 <- ols_step_both_p(model_2, pent = 0.1, prem = 0.1)
+```
+
+```{r, echo=FALSE}
+model_2a <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # forward
+model_2b <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, arblösMän))     # backward
+model_2c <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # both
+model_2d <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblösMän, arblösTot, religio,
+                                           urban, skilsmässo))          # r sq adj
+model_2e <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblösTot, urban, skilsmässo,
+                                          religio))                     # r sq adj
+```
+
+```{r, echo=FALSE}
+# for created table of nested data
+nested_data_2 <- data.frame(
+  Metod= c(rep("Backward elimination", 2),
+           linebreak(rep("Forward selection\nStep-wise (forward)", 4),
+                     align = "l"),
+           #rep("Step-wise (forward)", 2),
+           rep("Best adj. R sq. 1", 5),
+           rep("Best adj. R sq. 2", 4)),
+  
+  Variabler = c(names(model_2b$coefficients)[-1],
+                sort(rep(names(model_2a$coefficients)[-1], 2)),
+                #names(model_2c$coefficients)[-1],
+                names(model_2d$coefficients)[-1],
+                names(model_2e$coefficients)[-1]),
+  
+  VIF = formatC(c(vif(model_2b),
+                  vif(model_2a),
+                  vif(model_2c),
+                  vif(model_2d),
+                  vif(model_2e)), digits = 3),
+  
+  pVärden = formatC(c(summary(model_2b)$coefficients[-1,4],
+                      sort(rep(summary(model_2a)$coefficients[-1,4],2)),
+                      #summary(model_2c)$coefficients[-1,4],
+                      summary(model_2d)$coefficients[-1,4],
+                      summary(model_2e)$coefficients[-1,4]), digits = 3),
+  
+  rSqAdj = formatC(c(rep(summary(model_2b)$adj.r.squared, 2),
+                     rep(summary(model_2a)$adj.r.squared, 2),
+                     rep(summary(model_2c)$adj.r.squared, 2),
+                     rep(summary(model_2d)$adj.r.squared, 5),
+                     rep(summary(model_2e)$adj.r.squared, 4)), digits = 3),
+  
+  . = rep(" ", 15))
+
+# Create a table with kable
+table_2 <- nested_data_2 %>%
+  kable(format = "latex", escape = FALSE, 
+        caption = "Potentiella modeller Period 2 (p-gränser för algo.=0.1)") %>%
+  
+  # Collapse rows within the "Group" column
+  collapse_rows(columns = c(1,2,3,4,5), valign = "middle",
+                latex_hline = "major") %>%
+  
+  # Add some table formatting (optional)
+  kable_styling("striped", full_width = FALSE) %>%
+  row_spec(0, bold = TRUE, background = "lightgray") %>%
+  kable_styling(latex_options = "HOLD_position")
 
 
+# Display the table
+table_2
+```
+
+```{r, echo=FALSE}
+# dataset 2 adjusted r sq plot
+all_2 %>%
+ggplot(aes(x=n, y=adjr, label = predictors)) +
+  geom_point() +
+  geom_point(data=all_2 %>% filter(adjr > 0.66),
+             pch=24,
+             size=4,
+             colour="purple") +
+  xlab("Number of variables (1-6)") +
+  ylab("Adjusted R squared") +
+  ggtitle("Adjusted R squared - all variable constellations Period 2") +
+  geom_text(data = all_2 %>% filter(adjr > 0.66),
+            vjust=-1, hjust=0.2,
+            angle = 18) +
+  ylim(0, 0.9) +
+  xlim(1, 8)
+```
+
+### Residualplottar - Period 2
+
+## Inflytelserika observationer
+
+### Period 1 - utan Jönköpings län
+
+### Residualplottar Period 1 - utan Jönköpings län
+
+### Period 2 - utan Norrbottens län
+
+### Residualplottar Period 2 - utan Norrbottens län
