@@ -176,7 +176,15 @@ sm_rel2 <- lm(sjmo ~ religio, data = data_2)
 
 
 ## Sammanfattning
-I detta projekt har vi...
+
+I detta projekt undersöker vi vilka faktorer som bäst kan förklara variationen av självmordsfrekvenen i Sverige baserat på sex förklarande variabler. De givna observationerna är från två olika tidsperioder och vi har valt att titta på modeller för tidsperioderna separat för att inte feltermerna ska bli större. 
+
+Vår metod gick ut på att först observera variablerna parvis mot varandra för att se om det finns några tecken på konlinjäritet, vilket det verkade vara. Efter detta undersökte vi $R^2_{adj}$, $VIF$-värden samt $p$-värden för olika sammansättningar av variabler och utförde variabelselektion genom användning av Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adj}$. Från detta valde vi ut några modeller för period 1 och några modeller för period 2 att resonera kring, där vi sedan valde ut en modell för respektive period som vi ansåg var den bästa förklarande modellen för respektive period. 
+
+Med hjälp av Cooks avstånd undersökte vi även inflytelserika variabler från båda tidsperioderna. Då vi inte kan avgöra vilka av de inflytelserika observationerna som bör exkluderas valde vi att göra hypotetiska modeller där den mest inflytelserika observationen från varje period exkluderades, för att ser hur detta skulle påverka modellen. Sedan gjorde vi på samma sätt som tidigare för dessa dataset där vi valde ut några modeller för period 1 respektive 2 och där vi sedan beslöt oss för en modell för respektive period som vi ansåg bäst beskrev självmordsfrekvensen. 
+
+Sammanfattningsvis har vi fastställt två olika modeller som vi anser är bäst för att förklara självmordsfrekvensen om vi inte tar hänsyn till inflytelserika observationer, där det är en modell för respektive tidsperiod. I den valda modellen för period 1 är de förklarande variablerna alkoholindex, religiositetsindex och arbetslöshetsindex total och för period 2 är de förklarande variabler religiositetsindex, urbaniseringsindex, skilsmässoindex och arbetslöshetsindex total. Vi kommer fram till att alkoholindex verkar kunna vara en bra förklarande variabel, men att kan bytas ut mot skilsmässoindex och urbaniseringsindex, då dessa variabler också kan förklara variationen i självmordsfrekvensen. 
+
 
 ## Inledning
 
