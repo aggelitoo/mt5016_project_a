@@ -213,11 +213,11 @@ model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # 
 model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # r sq adj
 model_1e <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblösTot, urban,
                                            skilsmässo,religio))              # r sq adj
-vif(model_1a)
-vif(model_1b)
-vif(model_1c)
-vif(model_1d)
-vif(model_1e)
+#vif(model_1a)
+#vif(model_1b)
+#vif(model_1c)
+#vif(model_1d)
+#vif(model_1e)
 ```
 ```{r, echo=FALSE}
 # for created table of nested data
