@@ -1,0 +1,289 @@
+---
+title: "Projekt A"
+author: "Olivia Buhr, Betty Frankl, August Jonasson, Sofia Näslund"
+date: "2023-09-23"
+output:
+  pdf_document: default
+  
+---
+
+
+```{r setup, include=FALSE}
+#install.packages("tidyverse")
+#install.packages("kableExtra")
+knitr::opts_chunk$set(echo = FALSE)
+#library(tidyverse)
+library(car)
+library(olsrr)
+library(knitr)
+library(kableExtra)
+```
+
+
+
+```{r, echo=FALSE}
+load("data_1.Rda")
+load("data_2.Rda")
+
+model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
+model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
+```
+
+
+\renewcommand{\tablename}{Tabell}
+\renewcommand{\figurename}{Figur}
+
+
+
+```{r, include=FALSE}
+# Bettys functions
+
+basic_plots <- function(data, model, title) {
+  par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+  plot(data$arblös_män, data$sjmo,
+       xlab = "arbetslöshetsindex män",
+       ylab = "självmordsfrekvens",
+       main = "Arbetslöshet män")
+  plot(data$arblös_tot, data$sjmo,
+       xlab = "arbetslöshetsindex total",
+       ylab = "",
+       main = "Arbetslöshet total")
+  plot(data$alko, data$sjmo,
+       xlab = "alkoholindex",
+       ylab = "",
+       main = "Alkohol")
+  plot(data$urban, data$sjmo,
+       xlab = "urbaniseringsindex",
+       ylab = "självmordsfrekvens",
+       main = "Urbanisering")
+  plot(data$skilsmässo, data$sjmo,
+       xlab = "skilsmässoindex",
+       ylab = "",
+       main = "Skilsmässor")
+  plot(data$religio, data$sjmo,
+       xlab = "religiositetsindex",
+       ylab = "",
+       main = "Religiositet")
+  
+  mtext(title, side = 3, line = -1, outer = TRUE, font = 2)
+}
+
+plot_predicted_residuals <- function(multi_model, title) {
+  plot(multi_model$fitted.values, multi_model$residuals,
+       xlab = "predikterade värden",
+       ylab = "residualer",
+       main = title)
+  abline(0,0, col = "#0299b0", lwd=1.4)
+} 
+
+plot_multi_residuals <- function(data, multi_model, title) {
+  par(mfrow = c(2,3))
+  plot(residuals(multi_model) ~ data$arblös_män, 
+       xlab = "arbetslöshetsindex män",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$arblös_tot, 
+       xlab = "arbetslöshetsindex total",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$alko, 
+       xlab = "alkoholindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$urban, 
+       xlab = "urbaniseringsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$skilsmässo, 
+       xlab = "skilsmässoindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0) 
+  plot(residuals(multi_model) ~ data$religio, 
+       xlab = "religiositetsindex",
+       ylab = "residuals",
+       main = "Spread of residuals")
+  abline(0,0)
+  
+  mtext(title, side = 3, line = 0, outer = TRUE)
+}
+
+plot_qq <- function(multi_model, title) {
+  qqnorm(residuals(multi_model), 
+         xlab = "teoretiska kvantiler",
+         ylab = "datakvantiler",
+         main = title)
+  qqline(residuals(multi_model), col = "#ad465c", lwd=1.4)
+}
+```
+
+```{r, include=FALSE}
+#Bettys functions
+sm_arb_män1 <- lm(sjmo ~ arblösMän, data = data_1)
+sm_arb_tot1 <- lm(sjmo ~ arblösTot, data = data_1)
+sm_alk1 <- lm(sjmo ~ alko, data = data_1)
+sm_urb1 <- lm(sjmo ~ urban, data = data_1)
+sm_ski1 <- lm(sjmo ~ skilsmässo, data = data_1)
+sm_rel1 <- lm(sjmo ~ religio, data = data_1)
+
+sm_arb_män2 <- lm(sjmo ~ arblösMän, data = data_2)
+sm_arb_tot2 <- lm(sjmo ~ arblösTot, data = data_2)
+sm_alk2 <- lm(sjmo ~ alko, data = data_2)
+sm_urb2 <- lm(sjmo ~ urban, data = data_2)
+sm_ski2 <- lm(sjmo ~ skilsmässo, data = data_2)
+sm_rel2 <- lm(sjmo ~ religio, data = data_2)
+```
+
+
+## Sammanfattning
+I detta projekt har vi...
+
+## Inledning
+
+I det här projektet ska vi undersöka vilka faktorer som bäst kan förklara skillnader i självmordsfrekvens mellan olika län i Sverige. Det finns forskning som antyder att alkoholmissbruk kan föregå självmord, vi är därför särskilt intresserade av sambandet mellan dessa faktorer. 
+
+Till vår hjälp har vi två dataset baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa dataset innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
+
+1. Alkoholindex: genomsnittlig förbrukning av alkohol per person och år bland befolkningen över 15 år. Detta anses vara en starkt korrelerad faktor med andelen alkoholmissbrukare.
+2. Skilsmässoindex: andelen skilsmässor bland män under åren 1964 respektive 1967.
+3. Religiositetsindex: sammanvägning av andelen som tillhör statskyrkan och deltar i gudstjänster samt andelen som tillhör frikyrkliga samfund. Konstant för båda tidsperioderna.
+
+4. Arbetslöshetsindex totalt: andelen arbetslösa i mitten av de två tidsperioderna.
+
+5. Arbetslöshetsindex män: motsvarande arbetslöshet total, men endast för den manliga befolkningen.
+
+6. Urbaniseringsindex: andelen av befolkningen som bor i tätbefolkade områden.
+
+## Metod
+För att genomföra vår undersökning kommer vi använda oss av multipel linjär regression. Självmordsfrekvens är vår responsvariabel och övriga förklarande variabler. Då vi är intresserade av att förklara just självmordsfrekvens är det lämpligt att ha just denna variabel som responsvariabel. Det bör dock tilläggas att detta inte implicerar något kausalt samband. Huruvida det är den förklarande variabeln som påverkar självmordsfrekvensen, tvärtom eller en helt annan variabel vet vi inte. Den här undersökningen syftar endast till att förklara förändringen mellan länen. 
+
+Vi kommer analysera de två perioderna separat då det kan finnas viktiga skillnader i datan. Då vi endast har mätdata från två tidpunkter är det svårt att uttala sig om eventuell förändring över tid. Däremot kan vi upptäcka eventuella skillnader mellan de två tidsperioderna och analysera dessa. 
+
+För att uppfylla undersökningens syfte kommer vi lägga stor vikt vid valet av multipel linjär regressionsmodell. För att ta fram en så lämplig modell som möjligt kommer vi studera och analysera datan utifrån flera olika aspekter. Vi undersöker bland annat multikolinjäritet för olika kombinationer av variabler, $R^2$ -värden hos olika modeller och p-värden för variablerna i olika modeller. Då vi är särskilt intresserade av modeller som innehåller alkoholindex som förklarande variabel, men vi undersöker även om det finns andra modeller som kan förklara variationen bättre. 
+
+
+## Första observation & kolinjäritet
+
+Det första steget i undersökningen är att observera den insamlade datan åtskilda för de olika perioderna med alla variabler inkluderade. Vi gör detta med hjälp av parvisa plottar där vi kan studera korrelation mellan alla olika variabler, både respons och förklarande. 
+
+```{r, fig.cap = "Parvisa variabelsamband period 1"}
+pairs(data_1[2:8])
+```
+
+I figur 1 kan vi se att den totala arbetslösheten har stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
+
+Självmordsfrekvens verkar vara negativt korrelerad med religiositetindex samt positivt korrelerad med skiljsmässoindex och alkoholindex. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna. 
+
+```{r, fig.cap = "Parvisa variabelsamband period 2"}
+pairs(data_2[2:8])
+
+```
+
+I figur 2 kan vi se liknande samband som i figur 1, att den totala arbetslösheten har en stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
+
+Till skillnad från period 1 så är självmordsfrekvens och religiositetindex inte lika tydligt negativt korrelerade för period 2. Skiljsmässoindex och alkoholindex verkar dock fortfarande ha en positiv korrelation med självmordfrekvens. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna, möjligtvis att det kan finnas en negativ korrelation med arbetslöshet total. Vi kan eventuellt se en antydan till ett kvadratiskt samband mellan urbaniseringsindex och självmordsfrekvens.
+
+Den starka korrelationen mellan arbetslöshet total och arbetslöshet män var väntad då antalet arbetslösa män är en delmängd av antalet arbetslösa totalt. Detta innebär att båda dessa variabler förklarar i princip samma sak, vi kommer därför med största sannolikhet inte inkludera båda i vår slutgiltiga modell. Att inkludera starkt korrelerade förklarande variabler i en multipel regressionsmodell kan vara problematiskt då detta kan indikera kolinjäritet. Det räcker dock inte att enbart undersöka plottar, vi behöver även någon sorts mått för att avgöra graden av kolinjäritet mellan variablerna, detta kommer att undersökas vid variabelselektionen. 
+
+## Variabelselektion 
+
+Valet av förklarande variabler är helt centralt när vi väljer vilken modell som bäst kan besvara vår frågeställning. Det finns flera metoder för variabelselektion, vi kommer använda oss av Forward selection, Backward elimination och Stepwise regression. Detta är stegvisa metoder som bygger på att välja ut de förklarande variabler som ger högst $p$-värde i modellen. Det finns dock flera aspekter vi behöver ta hänsyn till, en av dem är förklaringsgraden, $R^2$. Notera att vi väljer $R^2$-adjusted istället för $R^2$ för att undvika överanpassning hos modellen. Då vi endast har sex potentiella förklarande variabler har vi möjligheten att undersöka alla möjliga kombinationer av variabler (63 stycken). Vi kommer därför beräkna $R^2$-adjusted för samtliga kombinationer av de förklarande variablerna och sedan välja ut de modeller med högst värde. Vi kommer även ta observera $VIF$-värdena för variablerna (variance inflation factor) som är ett mått på (multi)kolinjäritet, d.v.s. kolinjäritet mellan två eller flera variabler. Ett $VIF$-värde över fem anses ofta vara för högt, denna gräns kan dock variera beroende på t.ex. forskningsområde eller studie. Problemet med ett allt för högt $VIF$-värde är att skattningar av parametrar och $p$-värden kan bli opålitliga. Vi kommer därför studera $VIF$-värden noga när vi väljer vår modell.  
+
+
+Med dessa metoder kommer vi få flera potentiella kandidater till vår modell. Därefter kommer vi granska respektive kandidat och göra en sammanvägning av $R^2$-adjusted, $p$- och $VIF$-värden för att hitta den bästa modellen. Det bör tilläggas att vi inte kommer använda oss av något mått på prediktionsförmåga hos modellen, detta eftersom syftet är att förklara snarare än att prediktera. 
+
+Vi vill notera att vid detta tillfälle kommer vi inte ta hänsyn till inflytelserika observationer då vi inte har vidare kunskap om den insamlade datan. Vi kommer istället att diskutera potentiella modeller med hänseende till detta senare i rapporten. 
+
+För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{Adjusted}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adjusted}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan. 
+
+```{r, echo=FALSE}
+all_1 <- ols_step_all_possible(model_1)
+forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
+backward_1 <- ols_step_backward_p(model_1, prem = 0.1)
+both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
+```
+
+```{r, echo=FALSE}
+model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # forward
+model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösMän, urban))    # backward
+model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # both
+model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # r sq adj
+model_1e <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblösTot, urban,
+                                           skilsmässo,religio))              # r sq adj
+vif(model_1a)
+vif(model_1b)
+vif(model_1c)
+vif(model_1d)
+vif(model_1e)
+```
+```{r, echo=FALSE}
+# for created table of nested data
+nested_data_1 <- data.frame(
+  Metod= c(rep("Backward elimination", 3),
+           linebreak(rep("Forward selection\nStep-wise (forward)\nBest adj. R sq. 1", 9),
+                     align = "l"),
+           #rep("Step-wise (forward)", 3),
+           #rep("Best adj. R sq. 1", 3),
+           rep("Best adj. R sq. 2", 4)),
+  
+  Variabler = c(names(model_1b$coefficients)[-1],
+                sort(rep(names(model_1a$coefficients)[-1], 3)),
+                #names(model_1c$coefficients)[-1],
+                #names(model_1d$coefficients)[-1],
+                names(model_1e$coefficients)[-1]),
+  
+  VIF = formatC(c(vif(model_1b),
+                  rep(vif(model_1a)[1], 3),
+                  rep(vif(model_1a)[2], 3),
+                  rep(vif(model_1a)[3], 3),
+                  #vif(model_1c),
+                  #vif(model_1d),
+                  vif(model_1e)), digits = 3),
+  
+  pVärden = formatC(c(summary(model_1b)$coefficients[-1,4],
+                      rep(summary(model_1a)$coefficients[-1,4][1], 3),
+                      rep(summary(model_1a)$coefficients[-1,4][2], 3),
+                      rep(summary(model_1a)$coefficients[-1,4][3], 3),
+                      #summary(model_1c)$coefficients[-1,4],
+                      #summary(model_1d)$coefficients[-1,4],
+                      summary(model_1e)$coefficients[-1,4]), digits = 3),
+  
+  rSqAdj = formatC(c(rep(summary(model_1b)$adj.r.squared, 3),
+                     rep(summary(model_1a)$adj.r.squared, 3),
+                     rep(summary(model_1c)$adj.r.squared, 3),
+                     rep(summary(model_1d)$adj.r.squared, 3),
+                     rep(summary(model_1e)$adj.r.squared, 4)), digits = 3),
+  
+  . = rep(" ", 16))
+
+# Create a table with kable
+table_1 <- nested_data_1 %>%
+  kable(format = "latex", escape = FALSE, 
+        caption = "Potentiella modeller Period 1 (p-gränser för algo. = 0.1)") %>%
+  
+  #column_spec(column = 1, bold = TRUE) %>% 
+  
+  # Collapse rows within the "Group" column
+  collapse_rows(columns = c(1,2,3,4,5), valign = "middle",
+                latex_hline = "major") %>%
+  
+  # Add some table formatting (optional)
+  kable_styling("striped", full_width = FALSE) %>%
+  row_spec(0, bold = TRUE, background = "lightgray")
+
+
+# Display the table
+table_1
+```
+
+
+## Residualplottar - figurtext
+
+Modell 1c
+Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband mellan residualerna. 
+
+
