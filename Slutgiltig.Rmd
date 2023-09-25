@@ -638,20 +638,12 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 
 I Tabell 2 kan vi observera resultaten för samma process för period 2. Vi kan se att modellen med högst  $R^2_{adj}$ också har väldigt höga VIF-värden. Därför exkluderar vi denna från de potentiellt bästa modellerna. Däremot har modellen med näst högst $R^2_{adj}$ relativt bra VIF och relativt låga p-värden. Denna modell har arbetslöshetsindex, urbaniseringindex, religionsindex och skilsmässoindex som förklarande variabler, vilket även var en av de bästa modellerna för period 1. Vi har alltså inte med alkoholindex i den bästa modellen. Vi kan dock notera att för alla stegvisa metoder så har en modell med alkoholindex tagits fram, dessa har dock ganska låg förklaringsgrad. 
 
-
-```{r}
-(lm(data=data_2, formula = sjmo ~ skilsmässo + arblösTot + religio + urban ))
-#(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio ))
-
-```
-
-
 Det skiljer sig alltså lite mellan period 1 och 2. Vi skulle potentiellt kunna få fram en bra modell genom att byta ut skilsmässoindex och alkohol i modellen: 
 
 ```{r} 
 summary(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio + urban))
 ```  
-men förklaringsgraden blir då sämre. 
+men förklaringsgraden blir då märkbart sämre. 
 
 
 
