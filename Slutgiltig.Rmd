@@ -181,7 +181,7 @@ I detta projekt har vi...
 
 I det här projektet ska vi undersöka vilka faktorer som bäst kan förklara skillnader i självmordsfrekvens mellan olika län i Sverige. Det finns forskning som antyder att alkoholmissbruk kan föregå självmord, vi är därför särskilt intresserade av sambandet mellan dessa faktorer. 
 
-Till vår hjälp har vi två dataset baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa dataset innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
+Till vår hjälp har vi två datamängd baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa datamängd innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
 
 1. Alkoholindex: genomsnittlig förbrukning av alkohol per person och år bland befolkningen över 15 år. Detta anses vara en starkt korrelerad faktor med andelen alkoholmissbrukare.
 2. Skilsmässoindex: andelen skilsmässor bland män under åren 1964 respektive 1967.
@@ -468,7 +468,7 @@ table_1
 ```
 
 ```{r, echo=FALSE}
-# dataset 1 adjusted r sq plot
+# datamängd 1 adjusted r sq plot
 all_1 %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -615,7 +615,7 @@ table_2
 ```
 
 ```{r, echo=FALSE}
-# dataset 2 adjusted r sq plot
+# datamängd 2 adjusted r sq plot
 all_2 %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -772,7 +772,7 @@ table_1_red
 ```
 
 ```{r, echo=FALSE}
-# dataset 1 with jönköping removed adjusted r sq plot
+# datamängd 1 with jönköping removed adjusted r sq plot
 all_1_red %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -901,7 +901,7 @@ nested_table_2_red
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
-# dataset 2 with norrbotten removed adjusted r sq plot
+# datamängd 2 with norrbotten removed adjusted r sq plot
 all_2_red %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -921,12 +921,12 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 ```
 
 ## Diskussion
-Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i dataseten. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
+Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i datamängden. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
 
-För att kunna urskilja effekterna skulle vi behöva ortogonala data, men då detta dataset är relativt litet och verkar lida av viss kolinjäritet blir det svårt att utforska effekterna ytterligare.
+För att kunna urskilja effekterna skulle vi behöva ortogonala data, men då detta datamängd är relativt litet och verkar lida av viss kolinjäritet blir det svårt att utforska effekterna ytterligare.
 
 
 ## Reflektion över metodval
 Om det finns hög multikolinjäritet i en regressionsmodell kan p-värdena bli opålitliga, vilket är det som metoder för stegvis variabelselektion bygger på för att ta fram modeller. Det kan därför vara problematiskt att vi använde oss av stegvisa metoder för att ta fram modeller, när det fanns mycket korrelation hos våra förklarande variabler. Ett annat sätt att utföra detta projekt hade varit att i början av projektet undersöka $VIF$-värden för alla variabler i en gemensam modell. Genom att göra detta hade vi direkt kunnat utesluta variabler med höga $VIF$-värden för att på detta sätt kunna utesluta förklarande variabler med hög kolinjäritet. Då hade vi inte behövt oroa oss för detta vid ett senare skede i modellvalen och inte behöva reflektera över detta vidare. 
 
-Något vi har noterat med det givna datasetet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
+Något vi har noterat med det givna datamängdet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
