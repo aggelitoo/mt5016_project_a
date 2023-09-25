@@ -295,7 +295,7 @@ mtext("Residualplottar för modell med alla \n förklarande variabler (period 2)
 ```
 
 
-I Figur 5 ser residualerna mot predikterade värden ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55), då residualerna ser ut att ha en konvex form. Normal QQ-plotten ser okej ut med tanke på att vi har en begränsad mängd data. Vi bedömer därför att residualerna åtminstone ser approximativt normalfördelade ut.
+I Figur 5 ser residualerna mot predikterade värden ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikterade värden på ca. 35 till 55), då residualerna ser ut att ha en konvex form. Normal QQ-plotten ser okej ut med tanke på att vi har en begränsad mängd data. Vi bedömer därför att residualerna åtminstone ser approximativt normalfördelade ut.
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
