@@ -343,7 +343,7 @@ new_model_2 <- lm(data = new_data_2, sjmo2~.)
 ```
 
 ### Transformation
-Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur 5) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur (?-?) kan vi se hur residualerna förändrades efter transformationen.
+Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur 5) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur 7 kan vi se hur residualerna förändrades efter transformationen.
 
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
@@ -356,7 +356,7 @@ mtext("Residualplottar för modell med alla förklarande variabler och \n kvadra
 ```
 
 
-I Figur 7 kan vi se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur (???) inte längre finns kvar. Den här plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, spridningen ser ut att minsta till höger. Det ser även ut att finnas en viss konkav form hos residualerna, vilket kan tyda på icke-linjäritet. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket från figur (???)
+I Figur 7 kan vi se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur 5 inte längre finns kvar. Den här plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, spridningen ser ut att minsta till höger. Det ser även ut att finnas en viss konkav form hos residualerna, vilket kan tyda på icke-linjäritet. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket i jämförelse med figur 5.
 
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
@@ -398,7 +398,7 @@ mtext("Residualplottar för modell med alla förklarande variabler och \nkvadrat
 
 I Figur 8 ser vi att residualerna ser bra ut för de flesta förklarande variabler. Spridningen är hyfsat jämn runt residualer = 0 och det går inte att urskilja något tydligt samband mellan residualerna och  respektive förklarande variabel.
 
-Det finns vissa fördelar med den modell där vi transformerade vår responsvariabel, förbättringarna var dock marginella. Den eventuella icke-linjäriteten som vi såg i figur(???) försvann men vi fick istället vissa andra problem med residualerna. Residualerna mot de förklarande variablerna såg dock bra ut. Ett annat problem som skapas när vi transformerar är att tolkningen av modellen blir mindre intuitiv. Istället för att förklara variationen hos självmordsfrekvensen förklarar vi hur kvadratroten ur självmordsfrekvensen varierar. Då vi väger samman dessa faktorer bedömer vi att det mest lämpliga i det här fallet är att behålla självmordsfrekvensen som förklarande variabel. 
+Det finns vissa fördelar med den modell där vi transformerade vår responsvariabel, förbättringarna var dock marginella. Den eventuella icke-linjäriteten som vi såg i figur 5 försvann men vi fick istället vissa andra problem med residualerna. Residualerna mot de förklarande variablerna såg dock bra ut. Ett annat problem som skapas när vi transformerar är att tolkningen av modellen blir mindre intuitiv. Istället för att förklara variationen hos självmordsfrekvensen förklarar vi hur kvadratroten ur självmordsfrekvensen varierar. Då vi väger samman dessa faktorer bedömer vi att det mest lämpliga i det här fallet är att behålla självmordsfrekvensen som förklarande variabel. 
 
 ## Variabelselektion 
 
