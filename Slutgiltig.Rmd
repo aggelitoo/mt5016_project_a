@@ -410,16 +410,13 @@ Det finns vissa fördelar med den modell där vi transformerade vår responsvari
 
 ## Variabelselektion 
 
-Valet av förklarande variabler är helt centralt när vi väljer vilken modell som bäst kan besvara vår frågeställning. Det finns flera metoder för variabelselektion, vi kommer använda oss av Forward selection, Backward elimination och Stepwise regression. Detta är stegvisa metoder som bygger på att välja ut de förklarande variabler som ger högst $p$-värde i modellen. Det finns dock flera aspekter vi behöver ta hänsyn till, en av dem är förklaringsgraden, $R^2$. Notera att vi väljer $R^2$-adjusted istället för $R^2$ för att undvika överanpassning hos modellen. Då vi endast har sex potentiella förklarande variabler har vi möjligheten att undersöka alla möjliga kombinationer av variabler (63 stycken). Vi kommer därför beräkna $R^2$-adjusted för samtliga kombinationer av de förklarande variablerna och sedan välja ut de modeller med högst värde. Vi kommer även ta observera $VIF$-värdena för variablerna (variance inflation factor) som är ett mått på (multi)kolinjäritet, d.v.s. kolinjäritet mellan två eller flera variabler. Ett $VIF$-värde över fem anses ofta vara för högt, denna gräns kan dock variera beroende på t.ex. forskningsområde eller studie. Problemet med ett allt för högt $VIF$-värde är att skattningar av parametrar blir bli opålitliga. Vi kommer därför studera $VIF$-värden noga när vi väljer vår modell.  
-
+Valet av förklarande variabler är helt centralt när vi väljer vilken modell som bäst kan besvara vår frågeställning. Det finns flera metoder för variabelselektion, vi kommer använda oss av Forward selection, Backward elimination och Stepwise regression. Detta är stegvisa metoder som bygger på att välja ut de förklarande variabler som ger högst $p$-värde i modellen. Det finns dock flera aspekter vi behöver ta hänsyn till, en av dem är förklaringsgraden, $R^2$. Notera att vi väljer $R^2$-adjusted istället för $R^2$ för att undvika överanpassning hos modellen. Då vi endast har sex potentiella förklarande variabler har vi möjligheten att undersöka alla möjliga kombinationer av variabler (63 stycken). Vi kommer därför beräkna $R^2$-adjusted för samtliga kombinationer av de förklarande variablerna och sedan välja ut de modeller med högst värde. Vi kommer även observera $VIF$-värdena för variablerna (variance inflation factor) som är ett mått på (multi)kolinjäritet, d.v.s. kolinjäritet mellan två eller flera variabler. Ett $VIF$-värde över fem anses ofta vara för högt, denna gräns kan dock variera beroende på t.ex. forskningsområde eller studie. Problemet med ett allt för högt $VIF$-värde är att skattningar av parametrar och $p$-värden kan bli opålitliga.
 
 Med dessa metoder kommer vi få flera potentiella kandidater till vår modell. Därefter kommer vi granska respektive kandidat och göra en sammanvägning av $R^2$-adjusted, $p$- och $VIF$-värden för att hitta den bästa modellen. Det bör tilläggas att vi inte kommer använda oss av något mått på prediktionsförmåga hos modellen, detta eftersom syftet är att förklara snarare än att prediktera. 
 
 Vi vill notera att vid detta tillfälle kommer vi inte ta hänsyn till inflytelserika observationer då vi inte har vidare kunskap om den insamlade datan. Vi kommer istället att diskutera potentiella modeller med hänseende till detta senare i rapporten. 
 
-För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{adj}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adj}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan.
-
-### Period 1
+Vi börjar med att studera period 1.
 
 ```{r, echo=FALSE}
 all_1 <- ols_step_all_possible(model_1)
@@ -520,28 +517,30 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 
 I Tabell 1 ser vi respektive metod, med resulterande modellvärden, som, för att välja variabler, har använts på datamängden som svarar mot period 1 (vi har använt samma metoder för alla datamängder i denna studie). I kolumnen “Variabler” ser vi konstellationen variabler som motsvarande metod resulterade i. De resterande kolumnerna redovisar de värden vi anser vara mest kritiska till valet av en (förklarande) modell.
 
-I tillhörande plot, Figur ???, syns hur vi har gått tillväga för att plocka ut de modeller med högst förklaringsgrad. I denna plot motsvarar en punkt en unik uppsättning av variabler. Således blir det totala antalet punkter $2^6 -1$ (-1 eftersom vi inte har någon tom uppsättning), eftersom vi har sex stycken förklarande variabler. Y-axeln visar $R^2_{adj}$-värdet och således får vi en maxpunkt som svarar mot den uppsättning förklarande variabler med högst förklaringsgrad. I detta fall valde vi att studera de två uppsättningar som hade högst förklaringsgrad, eftersom de gav så pass lika förklaringsgrad.
+I tillhörande plot, (Adjusted R squared − all variable constellations Period 1), syns hur vi har gått tillväga för att plocka ut de modeller med högst förklaringsgrad. I denna plot motsvarar en punkt en unik uppsättning av variabler. Således blir det totala antalet punkter $2^6 -1$ (-1 eftersom vi inte har någon tom uppsättning), eftersom vi har sex stycken förklarande variabler. Y-axeln visar $R^2_{adj}$-värdet och således får vi en maxpunkt som svarar mot den uppsättning förklarande variabler med högst förklaringsgrad. I detta fall valde vi att studera de två uppsättningar som hade högst förklaringsgrad, eftersom de gav så pass lika förklaringsgrad.
 
-Vi ser nu från Tabell 1 att Forward selection, Step-wise (both) och Best $R^2_{adj}$ (näst bäst), alla tre, gav samma uppsättning variabler som bästa modell. Då denna modell dessutom innehåller variabeln “Alkoholindex” (samt “Arbetslöshetsindex totalt” och “Religiositetsindex”), kan vi dessutom fastslå ett av syftena med denna studie; finns det ett samband mellan alkohol och självmord? Värdena i Tabell 1 tyder på att alkohol bidrar till att förklara självmordsfrekvensen län sinsemellan under period 1 (1963-1965).
+Vi ser nu från Tabell 1 att Forward selection, Step-wise (both) och Best $R^2_{adj}$ (näst bäst), alla tre, gav samma uppsättning variabler som bästa modell. Då denna modell dessutom innehåller variabeln “Alkoholindex” (samt “Arbetslöshetsindex totalt” och “Religiositetsindex”), kan vi dessutom adressera ett av syftena med denna studie; finns det ett samband mellan alkohol och självmord? Värdena i Tabell 1 tyder på att alkohol bidrar till att förklara självmordsfrekvensen län sinsemellan under period 1 (1963-1965).
 
 Det ska dock nämnas att, även om p-värdena inte är perfekta, så antyder den sista raden i Tabell 1 att det finns en modell som inte inkluderar alkohol som förklarande variabel, men som ändå verkar kunna förklara självmordsfrekvensen. Det kan finnas viss kolinjäritet mellan de förklarande variablerna (alkohol kontra urban, skilsmässa, religion) som med vår data är omöjlig att “trassla” ut.  Mer om detta i slutet av rapporten.
 
-Vidare har vi också helt ignorerat förekomsten av inflytelserika observationer i denna del helt och hållet. Vi har valt att göra på det här sättet eftersom vi saknar domänkunskap helt och hållet i detta projekt. Vi anser att det hade varit för spekulativt att studera de här och har istället skapat en egen sektion av rapporten som är helt dedikerat till inflytelserika observationer och vad som händer om man tar bort dem.
-
-Den har dessutom väldigt låga VIF-värden, näst-högst $R^2_{adj}$ 
+Vidare har vi också ignorerat förekomsten av inflytelserika observationer i denna del helt och hållet. Vi har valt att göra på det här sättet eftersom vi saknar domänkunskap helt och hållet i detta projekt. Vi anser att det hade varit för spekulativt att studera de här och har istället skapat en egen sektion av rapporten som är helt dedikerat till inflytelserika observationer och vad som händer om man tar bort dem.
 
 ```{r}
 (lm(data=data_1, formula = sjmo ~ alko + arblösTot + religio ))
+```
+
+Sett till den första modellen så ser vi att alkohol verkar ha ett positivt
+samband till självmordsfrekvensen, vilket är föga överraskande. Mer intressant
+blir kanske den andra modellen.
+
+```{r}
 (lm(data=data_1, formula = sjmo ~ skilsmässo + arblösTot + religio + urban ))
+```
 
-``` 
+Om vi tittar på estimationerna här ser vi att koefficienten för urbaniseringsindex är nära 0, alltså att den har relativt liten påverkan på självmord. Den största skillnaden för de två modellerna är att den ena har med skillsmässoindex och den andra har med alkoholindex. Både modellen med alkoholindex och modellen med skilsmässoindex är bra förklaringsmodeller för självmordsfrekvens. Det är också värt att notera att dessa är två variabler som är ganska högt korrelerade (alltså alkohol och skilsmässor).
 
-Om vi tittar på estimationerna av variablerna för den sista modellen ser vi att den estimationen för urbaniseringsindex är nära 0, alltså att den har relativt liten påverkan på självmord. Den största skillnaden för de två modellerna är att den ena har med skillsmässoindex och den andra har med alkoholindex. Både modellen med alkoholindex och modellen med skillmässoindex är bra förklaringsmodeller för självmordsindex. Det är också värt att notera att dessa är två variabler som är ganska högt korrelerade.
-
-För att ytterligare stärka dessa modeller, undersöker vi hur deras residualer ser ut för att försäkra oss att de inte indikerar problem. 
-
-
-### Residualplottar - Period 1
+För att ytterligare stärka dessa modeller, undersöker vi hur deras residualer
+ser ut.
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
@@ -571,7 +570,7 @@ mtext("Residualplottar för modell med alkohol, \n arbetslöshet (total) och rel
 
 I Figur 9 ser vi att Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband med residualerna.
 
-### Period 2
+Vi går nu vidare till period 2.
 
 ```{r, echo=FALSE}
 all_2 <- ols_step_all_possible(model_2)
@@ -668,20 +667,27 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 
 
 
-I Tabell 2 kan vi observera resultaten för samma process för period 2. Vi kan se att modellen med högst  $R^2_{adj}$ också har väldigt höga VIF-värden. Därför exkluderar vi denna från de potentiellt bästa modellerna. Däremot har modellen med näst högst $R^2_{adj}$ relativt bra VIF och relativt låga p-värden. Denna modell har arbetslöshetsindex, urbaniseringindex, religionsindex och skilsmässoindex som förklarande variabler, vilket även var en av de bästa modellerna för period 1. Vi har alltså inte med alkoholindex i den bästa modellen. Vi kan dock notera att för alla stegvisa metoder så har en modell med alkoholindex tagits fram, dessa har dock ganska låg förklaringsgrad. 
+I Tabell 2 kan vi observera resultaten för period 2. Vi kan se att modellen med högst  $R^2_{adj}$ också har väldigt höga VIF-värden. Därför exkluderar vi denna från de potentiellt bästa modellerna. Däremot har modellen med näst högst $R^2_{adj}$ relativt bra VIF och relativt låga p-värden. Denna modell har arbetslöshetsindex, urbaniseringindex, religionsindex och skilsmässoindex som förklarande variabler, vilket även var en av de bästa modellerna för period 1. Vi har alltså inte med alkoholindex i den bästa modellen
+för period 2.
 
-Det skiljer sig alltså lite mellan period 1 och 2. Vi skulle potentiellt kunna få fram en bra modell genom att byta ut skilsmässoindex och alkohol i modellen: 
+Vi kan nu se till koefficienterna för denna bästa modell i relation till kandidaten
+som inkluderar alkohol (och urbanisering).
 
-```{r} 
-summary(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio + urban))
-```  
-men förklaringsgraden blir då märkbart sämre. 
+Först modellen utan alkohol:
 
+```{r}
+lm(data=data_2, formula = sjmo ~ arblösTot + urban + skilsmässo + religio)
+```
+Sedan utan alkohol:
 
+```{r}
+lm(data=data_2, formula = sjmo ~ alko + urban)
+```
+Jämför vi nu de två så ser vi att, speciellt i den andra modellen så bidrar 
+urbaniseringsindex-variabeln med väldigt lite förklaring - lutningen är nära
+noll. Dessutom ser vi att skilsmässo-index och alkohol är ungefär lika
+stor effekt (nästan samma koefficient).
 
-
-
-### Residualplottar - Period 2
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
@@ -715,7 +721,7 @@ mtext("Residualplottar för modell med urbaniering, arbetslöshet (total), \n sk
 
 
 
-I Figur 10 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Som vi tidigare sett i figur(???) finns det en viss antydan till icke-linjäritet, vi bedömer dock att denna är försumbar och att residualerna är godtagbara (se avsnittet om residualer & transformation). Normal QQ-plotten ser okej ut, men det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer därför att residualerna verkar vara approximativt normalfördelade ut.
+I Figur 10 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Som vi tidigare sett i figur 5 finns det en viss antydan till icke-linjäritet, vi bedömer dock att denna är försumbar och att residualerna är godtagbara (se avsnittet om residualer & transformation). Normal QQ-plotten ser okej ut, men det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer därför att residualerna verkar vara approximativt normalfördelade ut.
 
 ## Inflytelserika observationer
 
