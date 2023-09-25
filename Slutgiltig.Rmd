@@ -715,9 +715,18 @@ Då vi inte har någon insyn i datainsamlingen och dessutom saknar domänkunskap
 
 ### Period 1 - utan Jönköpings län
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap = "Cook's distance plot"}
 ols_plot_cooksd_bar(model_1)
 ```
+
+
+
+Figur 11 visar vilka observationer som är inflytelserika med ett tröskelvärde på 0.16 för period 1. Från figuren kan vi avläsa att Jönköpings län är den mest inflytelserika observationen, följt av Stockholms län. Jönköping har väldigt högt religiositetsindex under tidsperiod 1 (1963-1965), samtidigt som självmordindexet inte är särskilt lågt. Den andra observationen som är inflytelserik är från Stockholms län, men då denna observation precis överstiger tröskelvärdet väljer vi att endast fokusera på Jönköping. 
+
+Då vi inte vet ifall dessa observationer är outliers eller inte kan vi inte avgöra om de borde exkluderas från modellen. På grund av detta kan vi endast spekulera och skapa hypotetiska modeller, utan att veta ifall de kan och borde appliceras på verkligheten. På grund av tidsramen av detta projekt testar vi att endast ta bort den observation med högst Cooks avstånd för att se hur det påverkar modellvalet. 
+
+För period 1 väljer vi alltså att exkludera Jönköping län för att se ifall det påverkar modellvalet och dess värden. Vi utför samma simultana utvärdering likt tidigare och presenterar resultatet för de bästa modellerna i tabellen nedan. 
+
 
 ```{r, echo=FALSE}
 # remove jönköpings län
@@ -741,6 +750,8 @@ model_1c_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblösTot,
 model_1d_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblösMän, urban,
                                                skilsmässo, religio))        # r sq adj
 ```
+
+
 
 ```{r, echo=FALSE}
 nested_data_1_red <- data.frame (
@@ -799,6 +810,10 @@ table_1_red <- nested_data_1_red %>%
 table_1_red
 ```
 
+
+Från Tabell 3 ser vi att alkohol nu, gentemot Tabell 1, har blivit mindre framträdande som förklarande variabel, och att kombinationen “Urbaniseringsindex”, “Skilsmässoindex” och “Religiositetsindex” tillsammans med “Arbetslöshetsindex” nu ger de klart högsta justerade förklaringsgraderna - nästan 70 % -  en ganska påtaglig ökning från de 63 % vi nådde upp till med alkohol, när Jönköping fortfarande var del av datan. När vi väljer ut just “Arbetslöshetsindex Män” som den fjärde variabeln får vi ganska signifikanta p-värden och även låga VIF-värden. Skulle det nu vara så att vi hade mer domänkunskap, och att Jönköping vore en observation som bör exkluderas, så hade denna modell varit en bra kandidat för att förklara självmordsfrekvensen under period 1 (förutsatt att residualerna ser bra ut).
+
+
 ```{r, echo=FALSE}
 # dataset 1 with jönköping removed adjusted r sq plot
 all_1_red %>%
@@ -852,13 +867,22 @@ mtext("Residualplottar för modell med urbaniering, arbetslöshet (män), \n ski
 ```
 
 
-I Figur 11 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så få datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband med residualerna.
+I Figur 12 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så få datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband med residualerna.
+
+
+Nu undersöker vi inflytelserika observationer på samma sätt för period 2 genom att undersöka Cooks avstånd för alla observationer. 
 
 ### Period 2 - utan Norrbottens län
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, fig.cap="Cook's distance plot"}
 ols_plot_cooksd_bar(model_2)
 ```
+
+
+I Figur 13 kan vi observera att det finns fyra inflytelserika observationer som överstiger tröskelvärdet på 0.16 för period 2. Dessa observationer har dock inte lika höga Cooks avstånd som observationerna för period 1. Den observation med högst värde är Norrbotten län, detta på grund av hög arbetslöshetsindex både för män och totalt. Näst högst Cooks avstånd har Jönköping län som har ett högt religiositetindex, efter det följer Gotlands län och Hallands län där Gotland har låg urbaniseringsindex och Halland har låg arbetslöshetsindex för män.
+
+Likt period 1 kommer vi nu att exkludera den observation med högst Cooks avstånd för period 2, vilket i detta fall är Norrbottens län. Nu gör vi likt tidigare en tabell för de bästa modellerna med det de reducerade datan, resultatet presenteras nedan.
+
 
 ```{r, echo=FALSE}
 # remove jönköpings län
@@ -932,6 +956,11 @@ nested_table_2_red <- nested_data_2_red %>%
 nested_table_2_red
 ```
 
+
+I Tabell 4 ser vi i stort sett samma modeller som i Tabell 2 (samma period, fast med komplett data). Alltså bidrog inte detta med speciellt mycket ny info och vi avstår därför från att vidare utforska detta.
+Med rätt domänkunskap kanske vi hade kunnat exkludera ytterligare län, men vi avstår från att spekulera ytterligare om detta.
+
+
 ```{r, echo=FALSE, warning=FALSE}
 # dataset 2 with norrbotten removed adjusted r sq plot
 all_2_red %>%
@@ -951,7 +980,6 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
   ylim(0, 0.9) +
   xlim(1, 8)
 ```
-
 ## Diskussion
 Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i dataseten. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
 
