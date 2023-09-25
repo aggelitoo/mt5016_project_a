@@ -54,6 +54,7 @@ save(data_1, file = "data_1.Rda")
 save(data_2, file = "data_2.Rda")
 ```
 
+## Models
 ```{r, echo=FALSE}
 model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
 model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
@@ -181,7 +182,7 @@ I detta projekt har vi...
 
 I det här projektet ska vi undersöka vilka faktorer som bäst kan förklara skillnader i självmordsfrekvens mellan olika län i Sverige. Det finns forskning som antyder att alkoholmissbruk kan föregå självmord, vi är därför särskilt intresserade av sambandet mellan dessa faktorer. 
 
-Till vår hjälp har vi två datamängd baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa datamängd innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
+Till vår hjälp har vi två dataset baserade på registerdata från svenska län under 1960-talet, med tidsperioderna 1963-65 (period 1) och 1966-1968 (period 2). Dessa dataset innehåller information från 25 län och omfattar sex variabler som tros kunna påverka självmordsfrekvensen i länen. De undersökta variablerna inkluderar:
 
 1. Alkoholindex: genomsnittlig förbrukning av alkohol per person och år bland befolkningen över 15 år. Detta anses vara en starkt korrelerad faktor med andelen alkoholmissbrukare.
 2. Skilsmässoindex: andelen skilsmässor bland män under åren 1964 respektive 1967.
@@ -209,7 +210,7 @@ Det första steget i undersökningen är att observera den insamlade datan åtsk
 pairs(data_1[2:8])
 ```
 
-I figur 1 kan vi se att den totala arbetslösheten har stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
+I Figur 1 kan vi se att den totala arbetslösheten har stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
 
 Självmordsfrekvens verkar vara negativt korrelerad med religiositetindex samt positivt korrelerad med skiljsmässoindex och alkoholindex. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna. 
 
@@ -218,7 +219,7 @@ pairs(data_2[2:8])
 
 ```
 
-I figur 2 kan vi se liknande samband som i figur 1, att den totala arbetslösheten har en stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
+I Figur 2 kan vi se liknande samband som i figur 1, att den totala arbetslösheten har en stark positiv korrelation med arbetslöshet för män. Korrelationen mellan alkoholindex och skilsmässoindex samt urbaniseringsindex och skilmässoindex är också positiv. Det finns även en måttlig negativ korrelation mellan alkoholindex och religiositetsindex samt skilsmässoindex och religiositetsindex. 
 
 Till skillnad från period 1 så är självmordsfrekvens och religiositetindex inte lika tydligt negativt korrelerade för period 2. Skiljsmässoindex och alkoholindex verkar dock fortfarande ha en positiv korrelation med självmordfrekvens. Eventuell korrelation mellan självmordsfrekvens och resterande variabler är svårare att utröna, möjligtvis att det kan finnas en negativ korrelation med arbetslöshet total. Vi kan eventuellt se en antydan till ett kvadratiskt samband mellan urbaniseringsindex och självmordsfrekvens.
 
@@ -230,7 +231,7 @@ För att undersöka vår data ytterligare kan vi studera residualerna för de mu
 variabel skulle behöva transformeras. Vi börjar med att studera residualerna för 
 period 1.
 
-```{r, echo=FALSE, fig.cap="Plotten med residualer mot predikterade värden ser bra ut, punkterna har en jämn spridning längs residualer = 0, med andra ord verkar det finnas en homoskedasticitet. Normal QQ-plotten ser också bra ut, residualerna ser approximativt normalfördelade ut."}
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_1, "Mot predikterade")
 plot_qq(model_1, "Normal-QQ plot")
@@ -238,7 +239,10 @@ plot_qq(model_1, "Normal-QQ plot")
 mtext("Residualplottar för modell med alla \n förklarande variabler (period 1)", side = 3, line = 0, outer = TRUE, font = 2)
 ```
 
-```{r, echo=FALSE, fig.cap="I de flesta plottarna ser vi att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0, det finns inte heller några uppenbara samband mellan residualer och de förklarande variablerna. Möjligtvis att plotten med residualer mot religiositet visar ett potentiellt samband, men då vi har så få observationer är det svårt att avgöra."}
+
+I Figur 3 ser vi att plotten med residualer mot predikterade värden ser bra ut, punkterna har en jämn spridning längs residualer = 0, med andra ord verkar det finnas en homoskedasticitet. Normal QQ-plotten ser också bra ut, residualerna ser approximativt normalfördelade ut.
+
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
 plot(residuals(model_1) ~ data_1$arblösMän, 
      xlab = "arbetslöshetsindex män",
@@ -274,12 +278,15 @@ abline(0,0)
 mtext("Residualplottar för modell med alla förklarande variabler (period 1)", side = 3, line = -1, outer = TRUE, font = 2)
 ```
 
+
+I Figur 4 ser vi att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0, det finns inte heller några uppenbara samband mellan residualer och de förklarande variablerna. Möjligtvis att plotten med residualer mot religiositet visar ett potentiellt samband, men då vi har så få observationer är det svårt att avgöra. 
+
 Sammantaget ser residualerna för den multipla linjära regressionsmodellen med 
 samtliga förklarande variabler (period 1) bra ut. Vår bedömning är att någon transformation av responsvariabeln eller förklarande variabler inte är aktuell. 
 Vi går nu vidare till att undersöka residualerna hos samma regressionsmodell 
-för period 2. 
+för period 2:
 
-```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55), då residualerna ser ut att ha en konvex form. Normal QQ-plotten ser okej ut med tanke på att vi har en begränsad mängd data. Vi bedömer därför att residualerna åtminstone ser approximativt normalfördelade ut."}
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_2, "Mot predikterade")
 plot_qq(model_2, "Normal-QQ plot")
@@ -287,7 +294,10 @@ plot_qq(model_2, "Normal-QQ plot")
 mtext("Residualplottar för modell med alla \n förklarande variabler (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
 ```
 
-```{r, echo=FALSE, fig.cap="Plottarna visar att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0 för de flesta förklarande variablerna. Det finns möjligtvis något samband mellan residualerna och de förklarande variablerna för skilsmässor och religiositet. Detta är dock svårt att avgöra då vi har så få observationer. "}
+
+I Figur 5 ser residualerna mot predikterade värden ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55), då residualerna ser ut att ha en konvex form. Normal QQ-plotten ser okej ut med tanke på att vi har en begränsad mängd data. Vi bedömer därför att residualerna åtminstone ser approximativt normalfördelade ut.
+
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
 plot(residuals(model_2) ~ data_2$arblösMän, 
      xlab = "arbetslöshetsindex män",
@@ -323,6 +333,9 @@ abline(0,0)
 mtext("Residualplottar för modell med alla förklarande variabler (period 2)", side = 3, line = -1, outer = TRUE, font = 2)
 ```
 
+
+Figur 6 visar att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0 för de flesta förklarande variablerna. Det finns möjligtvis något samband mellan residualerna och de förklarande variablerna för skilsmässor och religiositet. Detta är dock svårt att avgöra då vi har så få observationer. 
+
 ```{r, include=FALSE}
 new_data_2 <- data_2 %>% mutate(sjmo2 = sqrt(sjmo)) 
 
@@ -331,15 +344,22 @@ new_model_2 <- lm(data = new_data_2, sjmo2~.)
 
 ### Transformation
 Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur ???) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur (?-?) kan vi se hur residualerna förändrades efter transformationen.
-```{r, echo=FALSE, fig.cap="Vi kan se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur (???) inte längre finns kvar. Den här plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, spridningen ser ut att minsta till höger. Det ser även ut att finnas en viss konkav form hos residualerna, vilket kan tyda på icke-linjäritet. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket från figur (???)."}
+
+
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(new_model_2, "Mot predikterade")
 plot_qq(new_model_2, "Normal-QQ plot")
-
 mtext("Residualplottar för modell med alla förklarande variabler och \n kvadratroten ur självmordsfrekvensen som responsvariabel (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+
+
 ```
 
-```{r, echo=FALSE, fig.cap="Residualerna ser bra ut för de flesta förklarande variabler. Spridningen är hyfsat jämn runt residualer = 0 och det går inte att urskilja något tydligt samband mellan residualerna och  respektive förklarande variabel."}
+
+I Figur 7 kan vi se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur (???) inte längre finns kvar. Den här plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, spridningen ser ut att minsta till höger. Det ser även ut att finnas en viss konkav form hos residualerna, vilket kan tyda på icke-linjäritet. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket från figur (???)
+
+
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
 plot(residuals(new_model_2) ~ new_data_2$arblösMän, 
      xlab = "arbetslöshetsindex män",
@@ -374,6 +394,9 @@ abline(0,0)
 
 mtext("Residualplottar för modell med alla förklarande variabler och \nkvadratroten ur självmordsfrekvensen som responsvariabel (period 2) ", side = 3, line = -1, outer = TRUE, font = 2)
 ```
+
+
+I Figur 8 ser vi att residualerna ser bra ut för de flesta förklarande variabler. Spridningen är hyfsat jämn runt residualer = 0 och det går inte att urskilja något tydligt samband mellan residualerna och  respektive förklarande variabel.
 
 Det finns vissa fördelar med den modell där vi transformerade vår responsvariabel, förbättringarna var dock marginella. Den eventuella icke-linjäriteten som vi såg i figur(???) försvann men vi fick istället vissa andra problem med residualerna. Residualerna mot de förklarande variablerna såg dock bra ut. Ett annat problem som skapas när vi transformerar är att tolkningen av modellen blir mindre intuitiv. Istället för att förklara variationen hos självmordsfrekvensen förklarar vi hur kvadratroten ur självmordsfrekvensen varierar. Då vi väger samman dessa faktorer bedömer vi att det mest lämpliga i det här fallet är att behålla självmordsfrekvensen som förklarande variabel. 
 
@@ -468,7 +491,7 @@ table_1
 ```
 
 ```{r, echo=FALSE}
-# datamängd 1 adjusted r sq plot
+# dataset 1 adjusted r sq plot
 all_1 %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -512,7 +535,7 @@ För att ytterligare stärka dessa modeller, undersöker vi hur deras residualer
 
 ### Residualplottar - Period 1
 
-```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband med residualerna."}
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
 plot_predicted_residuals(model_1c, "Mot predikterade")
 plot_qq(model_1c, "Normal-QQ plot")
@@ -537,6 +560,8 @@ abline(0,0)
 
 mtext("Residualplottar för modell med alkohol, \n arbetslöshet (total) och religiositet (period 1)", side = 3, line = -1, outer = TRUE, font = 2)
 ```
+
+I Figur 9 ser vi att Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband med residualerna.
 
 ### Period 2
 
@@ -615,7 +640,7 @@ table_2
 ```
 
 ```{r, echo=FALSE}
-# datamängd 2 adjusted r sq plot
+# dataset 2 adjusted r sq plot
 all_2 %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -650,7 +675,7 @@ men förklaringsgraden blir då märkbart sämre.
 
 ### Residualplottar - Period 2
 
-```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Som vi tidigare sett i figur(???) finns det en viss antydan till icke-linjäritet, vi bedömer dock att denna är försumbar och att residualerna är godtagbara (se avsnittet om residualer & transformation). Normal QQ-plotten ser okej ut, men det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer därför att residualerna verkar vara approximativt normalfördelade ut."}
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_2e, "Residualer mot prediktrade")
 plot_qq(model_2e, "Normal-QQ plot")
@@ -677,9 +702,12 @@ plot(residuals(model_2e) ~ data_2$religio,
 abline(0,0)
 
 mtext("Residualplottar för modell med urbaniering, arbetslöshet (total), \n skilsmässor och religiositet (period 2)", side = 3, line = - 1, outer = TRUE, font = 2)
+
 ```
 
 
+
+I Figur 10 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Som vi tidigare sett i figur(???) finns det en viss antydan till icke-linjäritet, vi bedömer dock att denna är försumbar och att residualerna är godtagbara (se avsnittet om residualer & transformation). Normal QQ-plotten ser okej ut, men det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer därför att residualerna verkar vara approximativt normalfördelade ut.
 
 ## Inflytelserika observationer
 
@@ -772,7 +800,7 @@ table_1_red
 ```
 
 ```{r, echo=FALSE}
-# datamängd 1 with jönköping removed adjusted r sq plot
+# dataset 1 with jönköping removed adjusted r sq plot
 all_1_red %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -793,7 +821,7 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 
 ### Residualplottar Period 1 - utan Jönköpings län
 
-```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så få datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband med residualerna."}
+```{r, echo=FALSE, fig.cap="Residualer"}
 par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_1d_red, "Residualer mot prediktrade")
 plot_qq(model_1d_red, "Normal-QQ plot")
@@ -820,7 +848,11 @@ plot(residuals(model_1d_red) ~ data_1_red$religio,
 abline(0,0)
 
 mtext("Residualplottar för modell med urbaniering, arbetslöshet (män), \n skilsmässor och religiositet (period 1, utan Jönköping)", side = 3, line = - 1, outer = TRUE, font = 2)
+
 ```
+
+
+I Figur 11 ser vi att residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så få datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband med residualerna.
 
 ### Period 2 - utan Norrbottens län
 
@@ -901,7 +933,7 @@ nested_table_2_red
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
-# datamängd 2 with norrbotten removed adjusted r sq plot
+# dataset 2 with norrbotten removed adjusted r sq plot
 all_2_red %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
   geom_point() +
@@ -921,12 +953,12 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 ```
 
 ## Diskussion
-Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i datamängden. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
+Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i dataseten. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
 
-För att kunna urskilja effekterna skulle vi behöva ortogonala data, men då detta datamängd är relativt litet och verkar lida av viss kolinjäritet blir det svårt att utforska effekterna ytterligare.
+För att kunna urskilja effekterna skulle vi behöva ortogonala data, men då detta dataset är relativt litet och verkar lida av viss kolinjäritet blir det svårt att utforska effekterna ytterligare.
 
 
 ## Reflektion över metodval
 Om det finns hög multikolinjäritet i en regressionsmodell kan p-värdena bli opålitliga, vilket är det som metoder för stegvis variabelselektion bygger på för att ta fram modeller. Det kan därför vara problematiskt att vi använde oss av stegvisa metoder för att ta fram modeller, när det fanns mycket korrelation hos våra förklarande variabler. Ett annat sätt att utföra detta projekt hade varit att i början av projektet undersöka $VIF$-värden för alla variabler i en gemensam modell. Genom att göra detta hade vi direkt kunnat utesluta variabler med höga $VIF$-värden för att på detta sätt kunna utesluta förklarande variabler med hög kolinjäritet. Då hade vi inte behövt oroa oss för detta vid ett senare skede i modellvalen och inte behöva reflektera över detta vidare. 
 
-Något vi har noterat med det givna datamängdet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
+Något vi har noterat med det givna datasetet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
