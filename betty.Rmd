@@ -14,11 +14,17 @@ library(tidyverse)
 
 load("data_1.Rda")
 load("data_2.Rda")
+
+data_1 <- data_1 %>% select(!län)
+data_2 <- data_2 %>% select(!län)
 ```
 
 ```{r, code = readLines("modeller.R"), include=FALSE}
 
 ```
+
+
+
 
 
 ```{r, include=FALSE}
@@ -149,15 +155,18 @@ kable(cbind(c("Förklarande variabel",
 basic_plots(data_2, model_2, "Plottar för respektive förklarande variabel mot självmordsfrekvens")
 ```
 
-# Översiks residualer
+# Översiks residualer period 1
 
-```{r}
+```{r, echo=FALSE, fig.cap="Plotten med residualer mot predikterade värden ser bra ut, punkterna har en jämn spridning längs residualer = 0, med andra ord verkar det finnas en homoskedasticitet. Normal QQ-plotten ser också bra ut, residualerna ser approximativt normalfördelade ut."}
 par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_1, "Mot predikterade")
 plot_qq(model_1, "Normal-QQ plot")
 
 mtext("Residualplottar för modell med alla \n förklarande variabler (period 1)", side = 3, line = 0, outer = TRUE, font = 2)
+```
 
+
+```{r, echo=FALSE, fig.cap="I de flesta plottarna ser vi att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0, det finns inte heller några uppenbara samband mellan residualer och de förklarande variablerna. Möjligtvis att plotten med residualer mot religiositet visar ett potentiellt samband, men då vi har så få observationer är det svårt att avgöra."}
 par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
 plot(residuals(model_1) ~ data_1$arblös_män, 
      xlab = "arbetslöshetsindex män",
@@ -193,6 +202,105 @@ abline(0,0)
 mtext("Residualplottar för modell med alla förklarande variabler (period 1)", side = 3, line = -1, outer = TRUE, font = 2)
 ```
 
+
+# Översiks residualer period 2
+
+```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55). Vi kan alltså se es viss heteroskedasticitet hos residualerna. Normal QQ-plotten ser okej ut, det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer dock att residualerna åtminstone ser approximativt normalfördelade ut."}
+par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_2, "Mot predikterade")
+plot_qq(model_2, "Normal-QQ plot")
+
+mtext("Residualplottar för modell med alla \n förklarande variabler (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+
+```{r, echo=FALSE, fig.cap="I de flera plottarna ser vi att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0. Det finns möjligtvis något samband mellan residualerna och de förklarande variablerna för skilsmässor och religiositet. Detta är återigen svårt att avgöra då vi har så få observationer är det svårt att avgöra. "}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot(residuals(model_2) ~ data_2$arblös_män, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet (män)")
+abline(0,0)
+plot(residuals(model_2) ~ data_2$arblös_tot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "",
+     main = "Mot arbetslöshet (total)")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alla förklarande variabler (period 2)", side = 3, line = -1, outer = TRUE, font = 2)
+```
+
+```{r, echo=FALSE}
+new_data_2 <- data_2 %>% mutate(sjmo2 = sqrt(sjmo)) 
+
+new_model_2 <- lm(data = new_data_2, sjmo2~.)
+```
+
+```{r, echo=FALSE, fig.cap="Vi kan se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur (???) inte längre finns kvar. Plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, det ser ut att finnas en viss bågform hos residualerna. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket från figur (???)."}
+par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(new_model_2, "Mot predikterade")
+plot_qq(new_model_2, "Normal-QQ plot")
+
+mtext("Residualplottar för modell med alla \n förklarande variabler och kvadratroten ur självmordsfrekvensen som responsvariabel (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+
+```{r, echo=FALSE, fig.cap="Residualerna ser bra ut för de flesta förklarande variabler. Spridningen är hyfsat jämn runt residualer = 0 och det går inte att urskilja något tydligt samband mellan residualerna och  respektive förklarande variabel."}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot(residuals(new_model_2) ~ new_data_2$arblös_män, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet (män)")
+abline(0,0)
+plot(residuals(new_model_2) ~ new_data_2$arblös_tot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "",
+     main = "Mot arbetslöshet (total)")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alla förklarande variabler och \nkvadratroten ur självmordsfrekvensen som responsvariabel (period 2) ", side = 3, line = -1, outer = TRUE, font = 2)
+```
+
 # 2.3 residualer model_1c
 
 ```{r, echo=FALSE}
@@ -226,7 +334,7 @@ mtext("Residualplottar för modell med alkohol, \n arbetslöshet (total) och rel
 ```{r, echo=FALSE, fig.cap="" }
 par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
 plot_predicted_residuals(model_2e, "Residualer mot prediktrade")
-plot_qq(model_1c, "Normal-QQ plot")
+plot_qq(model_2e, "Normal-QQ plot")
 
 plot(residuals(model_2e) ~ data_2$arblös_tot, 
      xlab = "arbetslöshetsindex total",
@@ -273,4 +381,35 @@ plot(residuals(model_2c) ~ data_2$urban,
 abline(0,0) 
 
 mtext("Residualplottar för modell med alkohol och urbaniering (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+# residualer model_1d_red
+
+```{r}
+par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_1d_red, "Residualer mot prediktrade")
+plot_qq(model_1d_red, "Normal-QQ plot")
+
+plot(residuals(model_1d_red) ~ data_1_red$arblös_män, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med urbaniering, arbetslöshet (män), \n skilsmässor och religiositet (period 1, utan Jönköping)", side = 3, line = - 1, outer = TRUE, font = 2)
 ```
