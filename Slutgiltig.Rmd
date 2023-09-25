@@ -343,7 +343,7 @@ new_model_2 <- lm(data = new_data_2, sjmo2~.)
 ```
 
 ### Transformation
-Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur ???) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur (?-?) kan vi se hur residualerna förändrades efter transformationen.
+Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur 5) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur (?-?) kan vi se hur residualerna förändrades efter transformationen.
 
 
 ```{r, echo=FALSE, fig.cap="Residualer"}
