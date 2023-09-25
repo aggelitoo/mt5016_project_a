@@ -487,14 +487,29 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 ```
 
 
-I Tabell 1
 
+I Tabell 1 ser vi respektive metod, med resulterande modellvärden, som, för att välja variabler, har använts på datamängden som svarar mot period 1 (vi har använt samma metoder för alla datamängder i denna studie). I kolumnen “Variabler” ser vi konstellationen variabler som motsvarande metod resulterade i. De resterande kolumnerna redovisar de värden vi anser vara mest kritiska till valet av en (förklarande) modell.
+
+I tillhörande plot, Figur ???, syns hur vi har gått tillväga för att plocka ut de modeller med högst förklaringsgrad. I denna plot motsvarar en punkt en unik uppsättning av variabler. Således blir det totala antalet punkter $2^6 -1$ (-1 eftersom vi inte har någon tom uppsättning), eftersom vi har sex stycken förklarande variabler. Y-axeln visar $R^2_{adj}$-värdet och således får vi en maxpunkt som svarar mot den uppsättning förklarande variabler med högst förklaringsgrad. I detta fall valde vi att studera de två uppsättningar som hade högst förklaringsgrad, eftersom de gav så pass lika förklaringsgrad.
+
+Vi ser nu från Tabell 1 att Forward selection, Step-wise (both) och Best $R^2_{adj}$ (näst bäst), alla tre, gav samma uppsättning variabler som bästa modell. Då denna modell dessutom innehåller variabeln “Alkoholindex” (samt “Arbetslöshetsindex totalt” och “Religiositetsindex”), kan vi dessutom fastslå ett av syftena med denna studie; finns det ett samband mellan alkohol och självmord? Värdena i Tabell 1 tyder på att alkohol bidrar till att förklara självmordsfrekvensen län sinsemellan under period 1 (1963-1965).
+
+Det ska dock nämnas att, även om p-värdena inte är perfekta, så antyder den sista raden i Tabell 1 att det finns en modell som inte inkluderar alkohol som förklarande variabel, men som ändå verkar kunna förklara självmordsfrekvensen. Det kan finnas viss kolinjäritet mellan de förklarande variablerna (alkohol kontra urban, skilsmässa, religion) som med vår data är omöjlig att “trassla” ut.  Mer om detta i slutet av rapporten.
+
+Vidare har vi också helt ignorerat förekomsten av inflytelserika observationer i denna del helt och hållet. Vi har valt att göra på det här sättet eftersom vi saknar domänkunskap helt och hållet i detta projekt. Vi anser att det hade varit för spekulativt att studera de här och har istället skapat en egen sektion av rapporten som är helt dedikerat till inflytelserika observationer och vad som händer om man tar bort dem.
+
+Den har dessutom väldigt låga VIF-värden, näst-högst $R^2_{adj}$ 
 
 ```{r}
 (lm(data=data_1, formula = sjmo ~ alko + arblösTot + religio ))
 (lm(data=data_1, formula = sjmo ~ skilsmässo + arblösTot + religio + urban ))
 
 ``` 
+
+Om vi tittar på estimationerna av variablerna för den sista modellen ser vi att den estimationen för urbaniseringsindex är nära 0, alltså att den har relativt liten påverkan på självmord. Den största skillnaden för de två modellerna är att den ena har med skillsmässoindex och den andra har med alkoholindex. Både modellen med alkoholindex och modellen med skillmässoindex är bra förklaringsmodeller för självmordsindex. Det är också värt att notera att dessa är två variabler som är ganska högt korrelerade.
+
+För att ytterligare stärka dessa modeller, undersöker vi hur deras residualer ser ut för att försäkra oss att de inte indikerar problem. 
+
 
 ### Residualplottar - Period 1
 
@@ -620,9 +635,8 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 ```
 
 
-I Tabell 2 ....
 
-
+I Tabell 2 kan vi observera resultaten för samma process för period 2. Vi kan se att modellen med högst  $R^2_{adj}$ också har väldigt höga VIF-värden. Därför exkluderar vi denna från de potentiellt bästa modellerna. Däremot har modellen med näst högst $R^2_{adj}$ relativt bra VIF och relativt låga p-värden. Denna modell har arbetslöshetsindex, urbaniseringindex, religionsindex och skilsmässoindex som förklarande variabler, vilket även var en av de bästa modellerna för period 1. Vi har alltså inte med alkoholindex i den bästa modellen. Vi kan dock notera att för alla stegvisa metoder så har en modell med alkoholindex tagits fram, dessa har dock ganska låg förklaringsgrad. 
 
 
 ```{r}
@@ -630,6 +644,16 @@ I Tabell 2 ....
 #(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio ))
 
 ```
+
+
+Det skiljer sig alltså lite mellan period 1 och 2. Vi skulle potentiellt kunna få fram en bra modell genom att byta ut skilsmässoindex och alkohol i modellen: 
+
+```{r} 
+summary(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio + urban))
+```  
+men förklaringsgraden blir då sämre. 
+
+
 
 
 
@@ -905,4 +929,13 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
   xlim(1, 8)
 ```
 
-### Residualplottar Period 2 - utan Norrbottens län
+## Diskussion
+Det verkar finnas ett samband mellan alkohol och självmord för tidperioderna 1963-65 och 1966-1968 för länen i dataseten. Vi kan däremot inte säga något om orsakssamband. Det skulle kunna finnas en bakomliggande variabel som påverkar både alkoholindex och självmordsfrekvens utan att variablerna egentligen har någon direkt påverkan på varandra, eller att en av de förklarande variablerna har en direkt påverkan på en annan. Exempelvis har vi sett att bland de bästa modellerna finns modeller med bland annat skillsmässoindex och utan alkoholindex som förklarar självmordsfrekvens bra. Vi har även sett att skillsmässoindex och alkoholindex är väldigt korrelerade. Det skulle kunna vara så att skillsmässoindex orsakar både en ökning i självmord och en ökning i alkoholkonsumtion, och att vi därför ser en generell ökning i självmord bland län när alkoholkonsumtion ökar. 
+
+För att kunna urskilja effekterna skulle vi behöva ortogonala data, men då detta dataset är relativt litet och verkar lida av viss kolinjäritet blir det svårt att utforska effekterna ytterligare.
+
+
+## Reflektion över metodval
+Om det finns hög multikolinjäritet i en regressionsmodell kan p-värdena bli opålitliga, vilket är det som metoder för stegvis variabelselektion bygger på för att ta fram modeller. Det kan därför vara problematiskt att vi använde oss av stegvisa metoder för att ta fram modeller, när det fanns mycket korrelation hos våra förklarande variabler. Ett annat sätt att utföra detta projekt hade varit att i början av projektet undersöka $VIF$-värden för alla variabler i en gemensam modell. Genom att göra detta hade vi direkt kunnat utesluta variabler med höga $VIF$-värden för att på detta sätt kunna utesluta förklarande variabler med hög kolinjäritet. Då hade vi inte behövt oroa oss för detta vid ett senare skede i modellvalen och inte behöva reflektera över detta vidare. 
+
+Något vi har noterat med det givna datasetet är att både Stockholm län och Stockholm stad än inkluderade som separata datapunkter. Detta är problematiskt eftersom dessa observationer inte är oberoende, då Stockholm stad är en del av Stockholms län. Vi kan däremot inte fastställa att exkludering av en av dessa datapunkter är föreskriven då vi inte är tillräckligt insatta i betydelsen av varje datapunkt. Det bör däremot ske en utvärdering över hur dessa datapunkter ska användas på ett optimalt sätt för vårt ändamål. På grund av denna ovisshet har vi valt att inte exkludera någon av dessa observationer.
