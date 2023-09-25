@@ -1,8 +1,16 @@
+---
+title: "Augusts grejer"
+author: "August"
+date: "2023-09-23"
+output: pdf_document
+---
 
 ```{r, include=FALSE}
 library(tidyverse)
 library(olsrr)
 library(car)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r, include=FALSE}
@@ -14,8 +22,8 @@ data_1 <- data %>%
   select("län", "y1", "x51", "x41", "x11", "x61", "x21", "x3") %>%
   rename("län" = "län",
          "sjmo" = "y1",
-         "arblös_män" = "x51",
-         "arblös_tot" = "x41",
+         "arblösMän" = "x51",
+         "arblösTot" = "x41",
          "alko" = "x11",
          "urban" = "x61",
          "skilsmässo" = "x21",
@@ -25,8 +33,8 @@ data_2 <- data %>%
   select("län", "y2", "x52", "x42", "x12", "x62", "x22", "x3") %>%
   rename("län" = "län",
          "sjmo" = "y2",
-         "arblös_män" = "x52",
-         "arblös_tot" = "x42",
+         "arblösMän" = "x52",
+         "arblösTot" = "x42",
          "alko" = "x12",
          "urban" = "x62",
          "skilsmässo" = "x22",
@@ -51,15 +59,17 @@ both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
 ```
 
 ```{r}
-model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # forward
-model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_män, urban))    # backward
-model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblös_tot, religio))  # both
-model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblös_tot, urban,
-                                           skilsmässo,religio))               # r sq adj
+model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # forward
+model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösMän, urban))    # backward
+model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # both
+model_1d <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # r sq adj
+model_1e <- lm(sjmo ~ ., data_1 %>% select(sjmo, arblösTot, urban,
+                                           skilsmässo,religio))              # r sq adj
 vif(model_1a)
 vif(model_1b)
 vif(model_1c)
 vif(model_1d)
+vif(model_1e)
 ```
 
 
@@ -67,13 +77,84 @@ vif(model_1d)
 
   Forward: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
   
-  Backward: `alko`, `arblös_män` `urban` (VIF 1.76, 1.09, 1.81)
+  Backward: `alko`, `arblösMän` `urban` (VIF 1.76, 1.09, 1.81)
   
   Both: `alko`, `arbslös_tot`, `religio` (VIF 1.68, 1.13, 1.54)
   
-  Best $R_{ajd}^2$: `alko`, `arblös_tot`, `religio` (VIF 1.68, 1.13, 1.54)\
-  eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.14, 2.57, 2.77, 1.33)
+  Best $R_{ajd}^2$: `alko`, `arblösTot`, `religio` (VIF 1.68, 1.13, 1.54)\
+  eller `arblösTot`, `urban`, `skilsmässo`, `religio`. (VIF 1.14, 2.57, 2.77, 1.33)
 
+```{r}
+# for created table of nested data
+nested_data_1 <- data.frame(
+  Metod= c(rep("Backward elimination", 3),
+           linebreak(rep("Forward selection\nStep-wise (forward)\nBest adj. R sq. 1", 9),
+                     align = "l"),
+           #rep("Step-wise (forward)", 3),
+           #rep("Best adj. R sq. 1", 3),
+           rep("Best adj. R sq. 2", 4)),
+  
+  Variabler = c(names(model_1b$coefficients)[-1],
+                sort(rep(names(model_1a$coefficients)[-1], 3)),
+                #names(model_1c$coefficients)[-1],
+                #names(model_1d$coefficients)[-1],
+                names(model_1e$coefficients)[-1]),
+  
+  VIF = formatC(c(vif(model_1b),
+                  rep(vif(model_1a)[1], 3),
+                  rep(vif(model_1a)[2], 3),
+                  rep(vif(model_1a)[3], 3),
+                  #vif(model_1c),
+                  #vif(model_1d),
+                  vif(model_1e)), digits = 3),
+  
+  pVärden = formatC(c(summary(model_1b)$coefficients[-1,4],
+                      rep(summary(model_1a)$coefficients[-1,4][1], 3),
+                      rep(summary(model_1a)$coefficients[-1,4][2], 3),
+                      rep(summary(model_1a)$coefficients[-1,4][3], 3),
+                      #summary(model_1c)$coefficients[-1,4],
+                      #summary(model_1d)$coefficients[-1,4],
+                      summary(model_1e)$coefficients[-1,4]), digits = 3),
+  
+  rSqAdj = formatC(c(rep(summary(model_1b)$adj.r.squared, 3),
+                     rep(summary(model_1a)$adj.r.squared, 3),
+                     rep(summary(model_1c)$adj.r.squared, 3),
+                     rep(summary(model_1d)$adj.r.squared, 3),
+                     rep(summary(model_1e)$adj.r.squared, 4)), digits = 3),
+  
+  . = rep(" ", 16))
+
+# Create a table with kable
+table_1 <- nested_data_1 %>%
+  kable(format = "latex", escape = FALSE, 
+        caption = "Potentiella modeller Period 1 (p-gränser för algo. = 0.1)") %>%
+  
+  #column_spec(column = 1, bold = TRUE) %>% 
+  
+  # Collapse rows within the "Group" column
+  collapse_rows(columns = c(1,2,3,4,5), valign = "middle",
+                latex_hline = "major") %>%
+  
+  # Add some table formatting (optional)
+  kable_styling("striped", full_width = FALSE) %>%
+  row_spec(0, bold = TRUE, background = "lightgray")
+
+
+# Display the table
+table_1
+```
+
+```{r}
+ggplot(all_1, aes(x=n, y=adjr)) + geom_point()
+
+all_1
+```
+
+### Cooks dataset 1 (komplett)
+```{r}
+ols_plot_cooksd_bar(lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot,
+                                                   religio)))
+```
 
 ## Dataset 2 (komplett data)
 ```{r}
@@ -85,11 +166,11 @@ both_2 <- ols_step_both_p(model_2, pent = 0.1, prem = 0.1)
 
 ```{r}
 model_2a <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # forward
-model_2b <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, arblös_män))     # backward
+model_2b <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, arblösMän))     # backward
 model_2c <- lm(sjmo ~ ., data_2 %>% select(sjmo, alko, urban))          # both
-model_2d <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_män, arblös_tot, alko,
+model_2d <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblösMän, arblösTot, alko,
                                            urban, skilsmässo))          # r sq adj
-model_2e <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblös_tot, urban, skilsmässo,
+model_2e <- lm(sjmo ~ ., data_2 %>% select(sjmo, arblösTot, urban, skilsmässo,
                                           religio))                     # r sq adj
 vif(model_2a)
 vif(model_2b)
@@ -102,19 +183,72 @@ vif(model_2e)
 
   Forward: `alko`, `urban` (VIF 1.57, 1.57)
   
-  Backward: `alko`, `arblös_män` (VIF 1.10, 1.10)
+  Backward: `alko`, `arblösMän` (VIF 1.10, 1.10)
   
   Both: `alko`, `urban` (VIF 1.57, 1.57)
   
-  Best $R_{ajd}^2$: `arblös_män`, `arblös_tot`, `alko`, `urban` `skilsmässo` (VIF 19.88, 20.79, 6.28, 3.07, 7.76)\
-  eller `arblös_tot`, `urban`, `skilsmässo`, `religio`. (VIF 1.03, 2.23, 2.56, 1.28)
+  Best $R_{ajd}^2$: `arblösMän`, `arblösTot`, `alko`, `urban` `skilsmässo` (VIF 19.88, 20.79, 6.28, 3.07, 7.76)\
+  eller `arblösTot`, `urban`, `skilsmässo`, `religio`. (VIF 1.03, 2.23, 2.56, 1.28)
   
   Från data 2 så får vi lägst p-värden när vi kombinerar alkohol med 
   urbaniseringsindex. En alternativ modell, med högre förklaringsgrad, och
-  nästintill lika låga p-värden hade varit konstellationen arblös_tot, urban,
+  nästintill lika låga p-värden hade varit konstellationen arblösTot, urban,
   skilsmässo, religio. Detta skildrar återigen svårigheterna med att trassla
   ut vilken variabel av skillsmässoindex och alkohol som är mest beskrivande.
   Ortogonal data hade behövts för att komma vidare.
+
+```{r}
+# for created table of nested data
+nested_data_2 <- data.frame(
+  Metod= c(rep("Backward elimination", 2),
+           rep("Forward selection", 4),
+           #rep("Step-wise (forward)", 2),
+           rep("Best adj. R sq. 1", 5),
+           rep("Best adj. R sq. 2", 4)),
+  
+  Variabler = c(names(model_2b$coefficients)[-1],
+                sort(rep(names(model_2a$coefficients)[-1], 2)),
+                #names(model_2c$coefficients)[-1],
+                names(model_2d$coefficients)[-1],
+                names(model_2e$coefficients)[-1]),
+  
+  VIF = formatC(c(vif(model_2b),
+                  vif(model_2a),
+                  vif(model_2c),
+                  vif(model_2d),
+                  vif(model_2e)), digits = 3),
+  
+  pVärden = formatC(c(summary(model_2b)$coefficients[-1,4],
+                      sort(rep(summary(model_2a)$coefficients[-1,4],2)),
+                      #summary(model_2c)$coefficients[-1,4],
+                      summary(model_2d)$coefficients[-1,4],
+                      summary(model_2e)$coefficients[-1,4]), digits = 3),
+  
+  rSqAdj = formatC(c(rep(summary(model_2b)$adj.r.squared, 2),
+                     rep(summary(model_2a)$adj.r.squared, 2),
+                     rep(summary(model_2c)$adj.r.squared, 2),
+                     rep(summary(model_2d)$adj.r.squared, 5),
+                     rep(summary(model_2e)$adj.r.squared, 4)), digits = 3),
+  
+  . = rep(" ", 15))
+
+# Create a table with kable
+table_2 <- nested_data_2 %>%
+  kable(format = "latex", escape = FALSE, 
+        caption = "Potentiella modeller Period 2 (p-gränser för algo. = 0.1)") %>%
+  
+  # Collapse rows within the "Group" column
+  collapse_rows(columns = c(1,2,3,4,5), valign = "middle",
+                latex_hline = "major") %>%
+  
+  # Add some table formatting (optional)
+  kable_styling("striped", full_width = FALSE) %>%
+  row_spec(0, bold = TRUE, background = "lightgray")
+
+
+# Display the table
+table_2
+```
 
 Pairwise plots
 ```{r}
@@ -157,12 +291,12 @@ both_1_red <- ols_step_both_p(model_1_red, pent = 0.1, prem = 0.1)
 
 
 ```{r}
-model_1a_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblös_tot,
+model_1a_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblösTot,
                                                    skilsmässo, urban))  # forward
-model_1b_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblös_tot, alko)) # backward
-model_1c_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblös_tot,
+model_1b_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblösTot, alko)) # backward
+model_1c_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, religio, arblösTot,
                                                skilsmässo, urban))      # both
-model_1d_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblös_män, urban,
+model_1d_red <- lm(sjmo ~ ., data_1_red %>% select(sjmo, arblösMän, urban,
                                                skilsmässo, religio))    # r sq adj
 vif(model_1a_red)
 vif(model_1b_red)
@@ -172,13 +306,13 @@ vif(model_1d_red)
 
 ### Variable selection summary `data_1_red` (Jönköpings län borttagen), (alla p-gränser = 0.1)
 
-  Forward: `religio`, `arblös_tot`, `skilsmässo`, `urban` (VIF 1.55, 1.23, 2.69, 2.74)
+  Forward: `religio`, `arblösTot`, `skilsmässo`, `urban` (VIF 1.55, 1.23, 2.69, 2.74)
   
-  Backward: `arblös_tot`, `alko` (VIF 1.16, 1.16)
+  Backward: `arblösTot`, `alko` (VIF 1.16, 1.16)
   
   Both: `religio`, `arbslös_tot`, `skilsmässo`, `urban` (VIF 1.55, 1.23, 2.69, 2.74)
   
-  Best $R_{ajd}^2$: `arblös_män`, `urban`, `skilsmässo`, `religio`` (VIF 1.18, 2.85, 2.79, 1.48)
+  Best $R_{ajd}^2$: `arblösMän`, `urban`, `skilsmässo`, `religio`` (VIF 1.18, 2.85, 2.79, 1.48)
 
 
 ```{r}
@@ -202,9 +336,9 @@ both_2_red <- ols_step_both_p(model_2_red, pent = 0.1, prem = 0.1)
 
 ```{r}
 model_2a_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, urban))  # forward
-model_2b_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, arblös_män)) # backward
+model_2b_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, arblösMän)) # backward
 model_2c_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, alko, urban))      # both
-model_2d_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, arblös_män, urban,
+model_2d_red <- lm(sjmo ~ ., data_2_red %>% select(sjmo, arblösMän, urban,
                                                skilsmässo, religio))    # r sq adj
 vif(model_2a_red)
 vif(model_2b_red)
@@ -216,18 +350,10 @@ vif(model_2d_red)
 
   Forward: `alko`, `urban` (VIF 1.59, 1.59)
   
-  Backward: `alko`, `arblös_män` (VIF 1.09, 1.09)
+  Backward: `alko`, `arblösMän` (VIF 1.09, 1.09)
   
   Both: `alko`, `urban` (VIF 1.59, 1.59)
   
-  Best $R_{ajd}^2$: `arblös_män`, `urban`, `skilsmässo`, `religio` (VIF 1.05, 2.31, 2.56, 1.29)
+  Best $R_{ajd}^2$: `arblösMän`, `urban`, `skilsmässo`, `religio` (VIF 1.05, 2.31, 2.56, 1.29)
   
-  
 
-
-
-Rader ur modell 1 som ska tas bort:
-6, 2
-
-Rader ur modell 2 som ska tas bort:
-6, 9, 13, 25
