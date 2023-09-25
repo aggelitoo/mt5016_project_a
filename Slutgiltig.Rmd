@@ -231,14 +231,14 @@ Vi vill notera att vid detta tillfälle kommer vi inte ta hänsyn till inflytels
 För att utföra variabelselektion för båda tidsperioderna undersöker vi VIF-värden, p-värden för variablerna samt $R^2_{Adjusted}$, där vi simultant utför Backward elimination, Forward selection, Stepwise samt Best adjusted $R^2_{adjusted}$. Resultatet för de bästa modellerna för tidsperiod 1 presenteras i tabellen nedan. 
 
 ## Dataset 1 (komplett data)
-```{r}
+```{r, echo=FALSE}
 all_1 <- ols_step_all_possible(model_1)
 forward_1 <- ols_step_forward_p(model_1, penter = 0.1)
 backward_1 <- ols_step_backward_p(model_1, prem = 0.1)
 both_1 <- ols_step_both_p(model_1, pent = 0.1, prem = 0.1)
 ```
 
-```{r}
+```{r, echo=FALSE}
 model_1a <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # forward
 model_1b <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösMän, urban))    # backward
 model_1c <- lm(sjmo ~ ., data_1 %>% select(sjmo, alko, arblösTot, religio))  # both
@@ -252,7 +252,7 @@ vif(model_1d)
 vif(model_1e)
 ```
 
-```{r}
+```{r, echo=FALSE}
 # for created table of nested data
 nested_data_1 <- data.frame(
   Metod= c(rep("Backward elimination", 3),
@@ -312,7 +312,7 @@ table_1 <- nested_data_1 %>%
 table_1
 ```
 
-```{r}
+```{r, echo=FALSE}
 # dataset 1 adjusted r sq plot
 all_1 %>%
 ggplot(aes(x=n, y=adjr, label = predictors)) +
