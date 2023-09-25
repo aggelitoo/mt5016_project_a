@@ -453,7 +453,7 @@ I Tabell 2 ....
 
 ```{r}
 (lm(data=data_2, formula = sjmo ~ skilsmässo + arblösTot + religio + urban ))
-(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio ))
+#(lm(data=data_2, formula = sjmo ~ alko + arblösTot + religio ))
 
 ```
 
