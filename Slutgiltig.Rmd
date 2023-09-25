@@ -491,17 +491,33 @@ I Tabell 1
 
 ``` 
 
-
-
-
 ### Residualplottar - Period 1
 
-Modell 1c
-Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband mellan residualerna. 
-			residualer 1d
+```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut. Spridningen längs residualer = 0 ser ut att vara jämnt fördelad och det finns inget tydligt samband med residualerna."}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot_predicted_residuals(model_1c, "Mot predikterade")
+plot_qq(model_1c, "Normal-QQ plot")
 
-Model 1d red
-Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så för datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband mellan residualerna. 
+plot.new()
+
+plot(residuals(model_1c) ~ data_1$arblösTot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "residualer",
+     main = "Mot arbetslöshet")
+abline(0,0) 
+plot(residuals(model_1c) ~ data_1$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(model_1c) ~ data_1$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alkohol, \n arbetslöshet (total) och religiositet (period 1)", side = 3, line = -1, outer = TRUE, font = 2)
+```
 
 ### Period 2
 
@@ -614,10 +630,35 @@ I Tabell 2 ....
 
 ### Residualplottar - Period 2
 
-Modell 2e
-Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55). Det skulle kunna ha att göra med urbaniseringsindex som vi tidigare såg  (i figur ? ) en antydan till kvadratiskt samband med självmordsfrekvens. Normal QQ-plotten visar att residualerna är förhållandevis normalfördelade. Det finns en tendens till avvikelse från linjen till vänster, men den är inte tillräckligt tydlig för att underkänna plotten. Plottarna med residualer mot respektive variabel ser också bra ut då spridningen längs residualer = 0 ser ut att vara jämnt fördelad. Möjligtvis att det finns ett möjligt samband hos residualerna för urbanieringsindex då vi kan svaga strukturer av en “båge” runt residualer = 0. 
-Modell 2c
-Residualerna mot predikterade värden ser bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna inte är helt normalfördelade, de ser ut att avvika från linjen både till höger och vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så för datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser ganska bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband mellan residualerna. 
+```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Som vi tidigare sett i figur(???) finns det en viss antydan till icke-linjäritet, vi bedömer dock att denna är försumbar och att residualerna är godtagbara (se avsnittet om residualer & transformation). Normal QQ-plotten ser okej ut, men det är svårt att avgöra då vi har en begränsad mängd data. Vi bedömer därför att residualerna verkar vara approximativt normalfördelade ut."}
+par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_2e, "Residualer mot prediktrade")
+plot_qq(model_2e, "Normal-QQ plot")
+
+plot(residuals(model_2e) ~ data_2$arblösTot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "residualer",
+     main = "Mot arbetslöshet")
+abline(0,0) 
+plot(residuals(model_2e) ~ data_2$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_2e) ~ data_2$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_2e) ~ data_2$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med urbaniering, arbetslöshet (total), \n skilsmässor och religiositet (period 2)", side = 3, line = - 1, outer = TRUE, font = 2)
+```
+
 
 
 ## Inflytelserika observationer
@@ -732,7 +773,34 @@ ggplot(aes(x=n, y=adjr, label = predictors)) +
 
 ### Residualplottar Period 1 - utan Jönköpings län
 
+```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet eller tecken på icke-linjäritet. Normal QQ-plotten visar att residualerna är hyfsat normalfördelade, dock ser de ut att avvika från linjen till vänster. Avvikelsen är dock inte tillräckligt tydlig med tanke på att vi har så få datapunkter. Vi kan därför inte helt förkasta normalfördelningsantagande. Plottarna med residualer mot respektive variabel ser bra ut. Spridningen längs residualer = 0 är hyfsat jämnt fördelad och det finns inget tydligt samband med residualerna."}
+par(mfrow = c(2,3), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_1d_red, "Residualer mot prediktrade")
+plot_qq(model_1d_red, "Normal-QQ plot")
 
+plot(residuals(model_1d_red) ~ data_1_red$arblösMän, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_1d_red) ~ data_1_red$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med urbaniering, arbetslöshet (män), \n skilsmässor och religiositet (period 1, utan Jönköping)", side = 3, line = - 1, outer = TRUE, font = 2)
+```
 
 ### Period 2 - utan Norrbottens län
 
