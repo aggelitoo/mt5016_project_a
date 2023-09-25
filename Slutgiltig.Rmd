@@ -54,7 +54,6 @@ save(data_1, file = "data_1.Rda")
 save(data_2, file = "data_2.Rda")
 ```
 
-## Models
 ```{r, echo=FALSE}
 model_1 <- lm(sjmo ~ ., data = data_1 %>% select(!län))
 model_2 <- lm(sjmo ~ ., data = data_2 %>% select(!län))
