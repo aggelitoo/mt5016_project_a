@@ -219,6 +219,159 @@ Till skillnad från period 1 så är självmordsfrekvens och religiositetindex i
 
 Den starka korrelationen mellan arbetslöshet total och arbetslöshet män var väntad då antalet arbetslösa män är en delmängd av antalet arbetslösa totalt. Detta innebär att båda dessa variabler förklarar i princip samma sak, vi kommer därför med största sannolikhet inte inkludera båda i vår slutgiltiga modell. Att inkludera starkt korrelerade förklarande variabler i en multipel regressionsmodell kan vara problematiskt då detta kan indikera kolinjäritet. Det räcker dock inte att enbart undersöka plottar, vi behöver även någon sorts mått för att avgöra graden av kolinjäritet mellan variablerna, detta kommer att undersökas vid variabelselektionen. 
 
+## Residualer & transformation av förklarande variabler
+
+För att undersöka vår data ytterligare kan vi studera residualerna för de multipla linjära regressionsmodellerna med alla förklarande variabler, för respektive period. Vi plottar residualer mot predikterade värden (som ges av modellen), normal QQ-plottar samt residualer mot respektive förklarande variabel. Detta ger oss information om bland annat homoskedasticitet, normalfördelning och om någon 
+variabel skulle behöva transformeras. Vi börjar med att studera residualerna för 
+period 1. 
+
+```{r, echo=FALSE, fig.cap="Plotten med residualer mot predikterade värden ser bra ut, punkterna har en jämn spridning längs residualer = 0, med andra ord verkar det finnas en homoskedasticitet. Normal QQ-plotten ser också bra ut, residualerna ser approximativt normalfördelade ut."}
+par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_1, "Mot predikterade")
+plot_qq(model_1, "Normal-QQ plot")
+
+mtext("Residualplottar för modell med alla \n förklarande variabler (period 1)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+```{r, echo=FALSE, fig.cap="I de flesta plottarna ser vi att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0, det finns inte heller några uppenbara samband mellan residualer och de förklarande variablerna. Möjligtvis att plotten med residualer mot religiositet visar ett potentiellt samband, men då vi har så få observationer är det svårt att avgöra."}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot(residuals(model_1) ~ data_1$arblösMän, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet (män)")
+abline(0,0)
+plot(residuals(model_1) ~ data_1$arblösTot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "",
+     main = "Mot arbetslöshet (total)")
+abline(0,0) 
+plot(residuals(model_1) ~ data_1$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(model_1) ~ data_1$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_1) ~ data_1$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_1) ~ data_1$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alla förklarande variabler (period 1)", side = 3, line = -1, outer = TRUE, font = 2)
+```
+
+Sammantaget ser residualerna för den multipla linjära regressionsmodellen med 
+samtliga förklarande variabler (period 1) bra ut. Vår bedömning är att någon transformation av responsvariabeln eller förklarande variabler inte är aktuell. 
+Vi går nu vidare till att undersöka residualerna hos samma regressionsmodell 
+för period 2. 
+
+```{r, echo=FALSE, fig.cap="Residualerna mot predikterade värden ser ganska bra ut, vi kan inte se någon tydlig heteroskedasticitet. Däremot finns det en antydan till icke-linjäritet (vid predikerade värden på ca. 35 till 55), då residualerna ser ut att ha en konvex form. Normal QQ-plotten ser okej ut med tanke på att vi har en begränsad mängd data. Vi bedömer därför att residualerna åtminstone ser approximativt normalfördelade ut."}
+par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(model_2, "Mot predikterade")
+plot_qq(model_2, "Normal-QQ plot")
+
+mtext("Residualplottar för modell med alla \n förklarande variabler (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+```{r, echo=FALSE, fig.cap="Plottarna visar att residualerna verkar ha en hyfsat jämn spridning runt residualer = 0 för de flesta förklarande variablerna. Det finns möjligtvis något samband mellan residualerna och de förklarande variablerna för skilsmässor och religiositet. Detta är dock svårt att avgöra då vi har så få observationer. "}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot(residuals(model_2) ~ data_2$arblösMän, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet (män)")
+abline(0,0)
+plot(residuals(model_2) ~ data_2$arblösTot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "",
+     main = "Mot arbetslöshet (total)")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(model_2) ~ data_2$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alla förklarande variabler (period 2)", side = 3, line = -1, outer = TRUE, font = 2)
+```
+
+### Transformation
+Då vi kunde se vissa (marginella) problem med icke-linjäritet och avvikelse från normalfördelningen (figur ???) hos residualerna för period 2 vill vi undersöka om vi kan få en bättre modell genom att transformera någon variabel. Vi undersöker detta genom att transformera variabeln, och sedan återigen studera plottarna. Vi testade ett flertal transformationer både för de förklarande variabler och responsvariabeln. Den transformation som gav bäst resultat var kvadratroten ur responsvariabeln. I figur (?-?) kan vi se hur residualerna förändrades efter transformationen. 
+
+```{r, include=FALSE}
+new_data_2 <- data_2 %>% mutate(sjmo2 = sqrt(sjmo)) 
+
+new_model_2 <- lm(data = new_data_2, sjmo2~.)
+```
+
+```{r, echo=FALSE, fig.cap="Vi kan se att det misstänkta sambandet i plotten för residualer mot predikterade värden i figur (???) inte längre finns kvar. Den här plotten för residualer mot predikterade värden ser dock inte helt homoskedastisk ut, spridningen ser ut att minsta till höger. Det ser även ut att finnas en viss konkav form hos residualerna, vilket kan tyda på icke-linjäritet. Normal-QQ plotten ser inte heller ut att ha förbättrats särskilt mycket från figur (???)."}
+par(mfrow = c(1,2), mar = c(5,4,4,2), oma = c(0,0,2,0), cex.lab=0.9)
+plot_predicted_residuals(new_model_2, "Mot predikterade")
+plot_qq(new_model_2, "Normal-QQ plot")
+
+mtext("Residualplottar för modell med alla förklarande variabler och \n kvadratroten ur självmordsfrekvensen som responsvariabel (period 2)", side = 3, line = 0, outer = TRUE, font = 2)
+```
+
+```{r, echo=FALSE, fig.cap="Residualerna ser bra ut för de flesta förklarande variabler. Spridningen är hyfsat jämn runt residualer = 0 och det går inte att urskilja något tydligt samband mellan residualerna och  respektive förklarande variabel."}
+par(mfrow = c(2,3), mar = c(5,4,4,2)-0.2, oma = c(0,0,2.3,0), cex.lab=0.9)
+plot(residuals(new_model_2) ~ new_data_2$arblösMän, 
+     xlab = "arbetslöshetsindex män",
+     ylab = "residualer",
+     main = "Mot arbetslöshet (män)")
+abline(0,0)
+plot(residuals(new_model_2) ~ new_data_2$arblösTot, 
+     xlab = "arbetslöshetsindex total",
+     ylab = "",
+     main = "Mot arbetslöshet (total)")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$alko, 
+     xlab = "alkoholindex",
+     ylab = "",
+     main = "Mot alkohol")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$urban, 
+     xlab = "urbaniseringsindex",
+     ylab = "residualer",
+     main = "Mot urbanisering")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$skilsmässo, 
+     xlab = "skilsmässoindex",
+     ylab = "",
+     main = "Mot skilsmässor")
+abline(0,0) 
+plot(residuals(new_model_2) ~ new_data_2$religio, 
+     xlab = "religiositetsindex",
+     ylab = "",
+     main = "Mot religiositet")
+abline(0,0)
+
+mtext("Residualplottar för modell med alla förklarande variabler och \nkvadratroten ur självmordsfrekvensen som responsvariabel (period 2) ", side = 3, line = -1, outer = TRUE, font = 2)
+```
+
+Det finns vissa fördelar med den modell där vi transformerade vår responsvariabel, förbättringarna var dock marginella. Den eventuella icke-linjäriteten som vi såg i figur(???) försvann men vi fick istället vissa andra problem med residualerna. Residualerna mot de förklarande variablerna såg dock bra ut. Ett annat problem som skapas när vi transformerar är att tolkningen av modellen blir mindre intuitiv. Istället för att förklara variationen hos självmordsfrekvensen förklarar vi hur kvadratroten ur självmordsfrekvensen varierar. Då vi väger samman dessa faktorer bedömer vi att det mest lämpliga i det här fallet är att behålla självmordsfrekvensen som förklarande variabel. 
 
 ## Variabelselektion 
 
